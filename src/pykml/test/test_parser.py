@@ -1,5 +1,9 @@
 #
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 import unittest
 from os import path
 import ssl
@@ -83,7 +87,7 @@ class ParseKmlOgcTestCase(unittest.TestCase):
                     '<name>KML Samples</name>'
             )
         except urllib2.URLError:
-            print 'Unable to access the URL. Skipping test...'
+            print('Unable to access the URL. Skipping test...')
     
     def test_parse_kml_file_with_cdata(self):
         "Tests the parsing of a local KML file, with a CDATA description string"
@@ -152,7 +156,7 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
             self.assertTrue(False)
         except urllib2.URLError:
-            print 'Unable to access the URL. Skipping test...'
+            print('Unable to access the URL. Skipping test...')
         except etree.XMLSyntaxError:
             self.assertTrue(True)
         except:
@@ -178,7 +182,7 @@ class ParseKmlGxTestCase(unittest.TestCase):
                       '<name>gx:altitudeMode Example</name>'
             )
         except urllib2.URLError:
-            print 'Unable to access the URL. Skipping test...'
+            print('Unable to access the URL. Skipping test...')
     
     def test_parse_kml_file(self):
         "Tests the parsing of a local KML file, with validation"
@@ -213,7 +217,7 @@ class ParseKmlGxTestCase(unittest.TestCase):
                       '<name>gx:AnimatedUpdate example</name>'
             )
         except urllib2.URLError:
-            print 'Unable to access the URL. Skipping test...'
+            print('Unable to access the URL. Skipping test...')
 
 if __name__ == '__main__':
     unittest.main()

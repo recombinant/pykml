@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
 # a Python script that uses pyKML to create a Hello World example
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 from lxml import etree
 from pykml.factory import KML_ElementMaker as KML
 
@@ -35,4 +39,4 @@ for i in range(0, len(text)):
                 ),
             )
         )
-print etree.tostring(etree.ElementTree(kmlobj), pretty_print=True)
+print(etree.tostring(etree.ElementTree(kmlobj), pretty_print=True))

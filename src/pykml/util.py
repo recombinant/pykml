@@ -5,6 +5,10 @@
 The pykml.utility module provides utility functions that operate on KML 
 documents
 """
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 import re
 
 

@@ -1,5 +1,9 @@
 #!/usr/bin/python
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 from lxml import etree
 from pykml.factory import KML_ElementMaker as KML
 from math import cos, sin, radians
@@ -28,4 +32,4 @@ for i in range(0, 103):
             )
         )
 
-print etree.tostring(etree.ElementTree(kmlobj), pretty_print=True)
+print(etree.tostring(etree.ElementTree(kmlobj), pretty_print=True))

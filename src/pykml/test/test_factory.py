@@ -1,5 +1,9 @@
 #
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 import unittest
 from os import path
 from lxml import etree
@@ -255,6 +259,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
         script = write_python_script_for_kml_document(doc)
         self.assertEquals(
             script,
+            'from __future__ import print_function\n'
             'from lxml import etree\n'
             'from pykml.factory import KML_ElementMaker as KML\n'
             'from pykml.factory import ATOM_ElementMaker as ATOM\n'
@@ -275,7 +280,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
             '    ),\n'
             '  ),\n'
             ')\n'
-            'print etree.tostring(etree.ElementTree(doc),pretty_print=True)\n'
+            'print(etree.tostring(etree.ElementTree(doc),pretty_print=True))\n'
         )
 
     def test_write_python_script_for_multiline_coordinate_string(self):
@@ -292,6 +297,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
         script = write_python_script_for_kml_document(doc)
         self.assertEquals(
             script,
+            'from __future__ import print_function\n'
             'from lxml import etree\n'
             'from pykml.factory import KML_ElementMaker as KML\n'
             'from pykml.factory import ATOM_ElementMaker as ATOM\n'
@@ -322,7 +328,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
             '    ),\n'
             '  ),\n'
             ')\n'
-            'print etree.tostring(etree.ElementTree(doc),pretty_print=True)\n'
+            'print(etree.tostring(etree.ElementTree(doc),pretty_print=True))\n'
         )
 
     def test_write_python_script_for_kml_document_with_cdata(self):
@@ -344,6 +350,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
         script = write_python_script_for_kml_document(doc)
         self.assertEquals(
             script,
+            'from __future__ import print_function\n'
             'from lxml import etree\n'
             'from pykml.factory import KML_ElementMaker as KML\n'
             'from pykml.factory import ATOM_ElementMaker as ATOM\n'
@@ -365,11 +372,11 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
             '    ),\n'
             '  ),\n'
             ')\n'
-            'print etree.tostring(etree.ElementTree(doc),pretty_print=True)\n'
+            'print(etree.tostring(etree.ElementTree(doc),pretty_print=True))\n'
         )
         # create a temporary python file
         handle, tfile = tempfile.mkstemp(suffix='.py')
-        # print tfile
+        # print(tfile)
         with open(tfile, 'w') as f:
             f.write(script)
 
@@ -413,7 +420,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
 
         # create a temporary python file
         handle, tfile = tempfile.mkstemp(suffix='.py')
-        # print tfile  #uncomment to print the temporary filename
+        # print(tfile)  # uncomment to print the temporary filename
         with open(tfile, 'w') as f:
             f.write(script)
 
@@ -427,7 +434,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
             os.path.join(path.dirname(__file__), '../..')
         )
         handle, temp_kml_file = tempfile.mkstemp(suffix='.kml')
-        # print temp_kml_file
+        # print(temp_kml_file)
         with open(temp_kml_file, 'w') as f:
             exit_code = subprocess.call(["python", tfile], stdout=f, env=current_env)
         self.assertEqual(exit_code, 0)
@@ -456,7 +463,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
 
         # create a temporary python file
         handle, tfile = tempfile.mkstemp(suffix='.py')
-        # print tfile  # Useful for debugging
+        # print(tfile)  # Useful for debugging
         with open(tfile, 'w') as f:
             f.write(script)
 
@@ -468,7 +475,7 @@ class GeneratePythonScriptTestCase(unittest.TestCase):
             os.path.join(path.dirname(__file__), '../..')
         )
         handle, temp_kml_file = tempfile.mkstemp(suffix='.kml')
-        # print temp_kml_file  # Useful for debugging
+        # print(temp_kml_file)  # Useful for debugging
         with open(temp_kml_file, 'w') as f:
             exit_code = subprocess.call(["python", tfile], stdout=f, env=current_env)
         self.assertEqual(exit_code, 0)

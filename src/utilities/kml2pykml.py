@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
 #
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 import sys
 import getopt
 from pykml.parser import parse
@@ -26,11 +30,11 @@ def main(argv=None):
         filename = argv[1]
         with open(filename) as f:
             kmldoc = parse(f, schema=schema)
-            print write_python_script_for_kml_document(kmldoc)
+            print(write_python_script_for_kml_document(kmldoc))
 
     except Usage, err:
-        print >> sys.stderr, err.msg
-        print >> sys.stderr, "for help use --help"
+        print(err.msg, file=sys.stderr)
+        print('for help use --help', file=sys.stderr)
         return 2
 
 

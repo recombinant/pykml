@@ -6,7 +6,10 @@ References:
 http://code.google.com/apis/kml/documentation/kmlreference.html#gxaltitudemode
 http://code.google.com/apis/kml/documentation/kmlfiles/altitudemode_reference.kml
 """
-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 from lxml import etree
 from pykml.parser import Schema
 from pykml.factory import KML_ElementMaker as KML
@@ -37,7 +40,7 @@ doc = KML.kml(
     )
 )
 
-print etree.tostring(doc, pretty_print=True)
+print(etree.tostring(doc, pretty_print=True))
 
 # output a KML file (named based on the Python script)
 outfile = file(__file__.rstrip('.py') + '.kml', 'w')

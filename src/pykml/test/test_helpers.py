@@ -1,5 +1,9 @@
 #
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 import unittest
 from pykml.factory import KML_ElementMaker as K
 from pykml.factory import ATOM_ElementMaker as ATOM

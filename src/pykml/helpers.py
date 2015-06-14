@@ -6,7 +6,10 @@ The pykml.helpers module contains 'helper' functions that operate on pyKML
 document objects for accomplishing common tasks.
 
 """
-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 from pykml.factory import KML_ElementMaker as K
 from pykml.factory import GX_ElementMaker as GX
 

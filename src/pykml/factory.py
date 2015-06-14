@@ -10,7 +10,10 @@ KML objects with the appropriate namespace prefixes.
 .. _lxml: http://lxml.de
 .. _lxml's ElementMaker factory: http://lxml.de/objectify.html#tree-generation-with-the-e-factory
 """
-
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 from lxml import etree, objectify
 
 nsmap = {
@@ -65,6 +68,9 @@ def write_python_script_for_kml_document(doc):
 
     output = StringIO.StringIO()
     indent_size = 2
+
+    # use print function as this is compatible with PY2 & PY3
+    output.write('from __future__ import print_function\n')
 
     # add the etree package so that comments can be handled
     output.write('from lxml import etree\n')
@@ -179,7 +185,7 @@ def write_python_script_for_kml_document(doc):
         ))
 
     # add python code to print out the KML document
-    output.write('print etree.tostring(etree.ElementTree(doc),pretty_print=True)\n')
+    output.write('print(etree.tostring(etree.ElementTree(doc),pretty_print=True))\n')
 
     contents = output.getvalue()
     output.close()
@@ -216,4 +222,4 @@ def kml2pykml():
                 pass  # variable was not defined
             else:
                 f.close
-    print write_python_script_for_kml_document(doc)
+    print(write_python_script_for_kml_document(doc))

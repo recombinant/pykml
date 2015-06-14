@@ -8,6 +8,10 @@ Note that this example requires the scipy package
 References:
 
 """
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
+# from __future__ import unicode_literals
 from datetime import time, datetime
 from time import mktime
 from lxml import etree
@@ -309,7 +313,7 @@ def main():
         GX.Tour(playlist),
     )
 
-    print etree.tostring(fld, pretty_print=True)
+    print(etree.tostring(fld, pretty_print=True))
 
 
 if __name__ == '__main__':
