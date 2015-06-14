@@ -5,6 +5,7 @@ from a file or remote URL.
 '''
 import sys
 import os
+import ssl
 import urllib2
 from lxml import etree, objectify
 
@@ -21,7 +22,8 @@ class Schema():
                 self.schema = etree.XMLSchema(file=f)
         except:
             # try to open a remote URL
-            f = urllib2.urlopen(schema)
+            context = ssl._create_unverified_context()
+            f = urllib2.urlopen(schema, context=context)
             self.schema = etree.XMLSchema(file=f)
     
     def validate(self, doc):

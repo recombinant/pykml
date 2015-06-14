@@ -1,5 +1,6 @@
 import unittest
 from os import path
+import ssl
 import urllib2
 from StringIO import StringIO
 from lxml import etree
@@ -16,7 +17,7 @@ class ValidatorTestCase(unittest.TestCase):
         self.assertTrue(isinstance(schema.schema, etree.XMLSchema))
 
     def test_initialize_schema_remote_url(self):
-        schema = Schema("http://code.google.com/apis/kml/schema/kml22gx.xsd")
+        schema = Schema('https://developers.google.com/kml/schema/kml22gx.xsd')
         self.assertTrue(isinstance(schema.schema, etree.XMLSchema))
 
 
@@ -65,12 +66,13 @@ class ParseKmlOgcTestCase(unittest.TestCase):
     
     def test_parse_kml_url(self):
         "Tests the parsing of a KML URL"
-        url = 'http://code.google.com/apis/kml/documentation/KML_Samples.kml'
+        url = 'https://developers.google.com/kml/documentation/KML_Samples.kml'
         #url = 'http://kml-samples.googlecode.com/svn/trunk/kml/Document/doc-with-id.kml'
-        #url = 'http://code.google.com/apis/kml/documentation/kmlfiles/altitudemode_reference.kml'
-        #url = 'http://code.google.com/apis/kml/documentation/kmlfiles/animatedupdate_example.kml'
+        #url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
+        #url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
+        context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url)
+            fileobject = urllib2.urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
             self.assertEquals(
                 etree.tostring(tree)[:78],
@@ -141,9 +143,10 @@ class ParseKmlOgcTestCase(unittest.TestCase):
         """Tests the parsing of an invalid KML document.  Note that this KML
         document uses elements that are not in the OGC KML spec.
         """
-        url = 'http://code.google.com/apis/kml/documentation/kmlfiles/altitudemode_reference.kml'
+        url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
+        context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url)
+            fileobject = urllib2.urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
             self.assertTrue(False)
         except urllib2.URLError:
@@ -159,9 +162,10 @@ class ParseKmlGxTestCase(unittest.TestCase):
     
     def test_parse_kml_url(self):
         "Tests the parsing of a KML URL"
-        url = 'http://code.google.com/apis/kml/documentation/kmlfiles/altitudemode_reference.kml'
+        url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
+        context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url)
+            fileobject = urllib2.urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema('kml22gx.xsd'))
             self.assertEquals(
                 etree.tostring(tree)[:185],
@@ -189,14 +193,15 @@ class ParseKmlGxTestCase(unittest.TestCase):
             doc = parse(f, schema=Schema('kml22gx.xsd'))
         # parse with validation (remote schema file)
         with open(test_datafile) as f:
-            doc = parse(f, schema=Schema('http://code.google.com/apis/kml/schema/kml22gx.xsd'))
+            doc = parse(f, schema=Schema('https://developers.google.com/kml/schema/kml22gx.xsd'))
         self.assertTrue(True)
     
     def test_parse_kml_url_2(self):
         "Tests the parsing of a KML URL"
-        url = 'http://code.google.com/apis/kml/documentation/kmlfiles/animatedupdate_example.kml'
+        url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
+        context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url)
+            fileobject = urllib2.urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema('kml22gx.xsd'))
             self.assertEquals(
                 etree.tostring(tree)[:137],
