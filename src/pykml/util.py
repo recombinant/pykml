@@ -206,8 +206,10 @@ def convert_csv_to_kml(
             )
         else:
             desc = '<table border="1"'
-            for key,val in row.iteritems():
-                desc += '<tr><th>{0}</th><td>{1}</td></tr>'.format(key,val)
+            fmt = '<tr><th>{0}</th><td>{1}</td></tr>'
+            # iterate through the cells in 'row' filling table
+            for field_name in csvdoc.fieldnames:
+                desc += fmt.format(field_name, row[field_name])
             desc += '</table>'
             pm.append(KML.description(clean_xml_string(desc)))
         
