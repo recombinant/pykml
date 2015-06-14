@@ -1,3 +1,5 @@
+#
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
 import unittest
 from os import path
 import ssl
@@ -67,9 +69,9 @@ class ParseKmlOgcTestCase(unittest.TestCase):
     def test_parse_kml_url(self):
         "Tests the parsing of a KML URL"
         url = 'https://developers.google.com/kml/documentation/KML_Samples.kml'
-        #url = 'http://kml-samples.googlecode.com/svn/trunk/kml/Document/doc-with-id.kml'
-        #url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
-        #url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
+        # url = 'http://kml-samples.googlecode.com/svn/trunk/kml/Document/doc-with-id.kml'
+        # url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
+        # url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
         context = ssl._create_unverified_context()
         try:
             fileobject = urllib2.urlopen(url, context=context)

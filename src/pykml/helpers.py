@@ -1,3 +1,5 @@
+#
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
 """pyKML Helpers Module
 
 The pykml.helpers module contains 'helper' functions that operate on pyKML 
@@ -8,9 +10,11 @@ document objects for accomplishing common tasks.
 from pykml.factory import KML_ElementMaker as K
 from pykml.factory import GX_ElementMaker as GX
 
+
 def separate_namespace(qname):
     "Separates the namespace from the element"
     import re
+
     try:
         namespace, element_name = re.search('^{(.+)}(.+)$', qname).groups()
     except:
@@ -18,12 +22,13 @@ def separate_namespace(qname):
         element_name = qname
     return namespace, element_name
 
+
 def set_max_decimal_places(doc, max_decimals):
     """Sets the maximum number of decimal places used by KML elements
     
     This method facilitates reducing the file size of a KML document.
     """
-    
+
     def replace_delimited_string_member(
             delimited_str,
             separator,
@@ -33,10 +38,10 @@ def set_max_decimal_places(doc, max_decimals):
         values = delimited_str.split(separator)
         values[index_no] = str(round(float(values[index_no]), decimal_places))
         return separator.join(values)
-    
-    if max_decimals.has_key('longitude'):
+
+    if 'longitude' in max_decimals:
         data_type = 'longitude'
-        index_no = 0 # longitude is in the first position
+        index_no = 0  # longitude is in the first position
         # modify <longitude>
         for el in doc.findall(".//{http://www.opengis.net/kml/2.2}longitude"):
             new_val = round(float(el.text), max_decimals[data_type])
@@ -65,10 +70,10 @@ def set_max_decimal_places(doc, max_decimals):
                     decimal_places=max_decimals[data_type]
                 )
             )
-    
-    if max_decimals.has_key('latitude'):
+
+    if 'latitude' in max_decimals:
         data_type = 'latitude'
-        index_no = 1 # latitude is in the second position
+        index_no = 1  # latitude is in the second position
         # modify <latitude> elements
         for el in doc.findall(".//{http://www.opengis.net/kml/2.2}latitude"):
             new_val = round(float(el.text), max_decimals[data_type])
@@ -98,9 +103,9 @@ def set_max_decimal_places(doc, max_decimals):
                 )
             )
 
-    if max_decimals.has_key('altitude'):
+    if 'altitude' in max_decimals:
         data_type = 'altitude'
-        index_no = 2 # altitude is in the third position
+        index_no = 2  # altitude is in the third position
         # modify <altitude> elements
         for el in doc.findall(".//{http://www.opengis.net/kml/2.2}altitude"):
             new_val = round(float(el.text), max_decimals[data_type])
@@ -129,16 +134,16 @@ def set_max_decimal_places(doc, max_decimals):
                     decimal_places=max_decimals[data_type]
                 )
             )
-    
-    if max_decimals.has_key('heading'):
+
+    if 'heading' in max_decimals:
         for el in doc.findall(".//{http://www.opengis.net/kml/2.2}heading"):
             new_val = round(float(el.text), max_decimals['heading'])
             el.getparent().heading = K.heading(new_val)
-    if max_decimals.has_key('tilt'):
+    if 'tilt' in max_decimals:
         for el in doc.findall(".//{http://www.opengis.net/kml/2.2}tilt"):
             new_val = round(float(el.text), max_decimals['tilt'])
             el.getparent().tilt = K.tilt(new_val)
-    if max_decimals.has_key('range'):
+    if 'range' in max_decimals:
         for el in doc.findall(".//{http://www.opengis.net/kml/2.2}range"):
             new_val = round(float(el.text), max_decimals['range'])
             el.getparent().range = K.range(new_val)

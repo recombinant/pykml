@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
 # a Python script that uses pyKML to create a Hello World example
 from lxml import etree
 from pykml.factory import KML_ElementMaker as KML
@@ -16,7 +17,7 @@ kmlobj = KML.kml(
     )
 )
 # add placemarks to the Document element
-for i in range(0,len(text)):
+for i in range(0, len(text)):
     if text[i] != ' ':
         kmlobj.Document.append(
             KML.Placemark(
@@ -26,12 +27,12 @@ for i in range(0,len(text)):
                     KML.extrude(1),
                     KML.altitudeMode('relativeToGround'),
                     KML.coordinates('{lon},{lat},{alt}'.format(
-                            lon=-70.0 + i*60.0/(len(text)-1),
-                            lat=60.0,
-                            alt=5000000,
-                        ),
+                        lon=-70.0 + i * 60.0 / (len(text) - 1),
+                        lat=60.0,
+                        alt=5000000,
+                    ),
                     ),
                 ),
             )
         )
-print etree.tostring(etree.ElementTree(kmlobj),pretty_print=True)
+print etree.tostring(etree.ElementTree(kmlobj), pretty_print=True)

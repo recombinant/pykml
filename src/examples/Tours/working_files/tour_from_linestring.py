@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-'''Generate a KML document of a tour based on a KML linestring.
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
+"""Generate a KML document of a tour based on a KML linestring.
 
-'''
+"""
 from pykml.parser import parse
 from pykml.factory import nsmap
 from pykml.factory import KML_ElementMaker as KML
@@ -10,14 +11,14 @@ from pykml.parser import Schema
 from lxml import etree
 
 # define variables for the namespace URL strings
-kmlns = '{}' #'{' + nsmap['kml'] + '}'
+kmlns = '{}'  # '{' + nsmap['kml'] + '}'
 gxns = '{' + nsmap['gx'] + '}'
 
 # start with a base KML tour and playlist
 tour_doc = KML.kml(
     GX.Tour(
-      KML.name("Play me!"),
-      GX.Playlist(),
+        KML.name("Play me!"),
+        GX.Playlist(),
     )
 )
 
@@ -30,24 +31,24 @@ coord_str = str(
 ).strip()
 
 for vertex in coord_str.split(' '):
-    (lon,lat,alt) = vertex.split(',')
+    (lon, lat, alt) = vertex.split(',')
     flyto = GX.FlyTo(
         GX.duration(2),
         GX.flyToMode("smooth"),
         KML.Camera(
-          KML.longitude(lon),
-          KML.latitude(lat),
-          KML.altitude(0),
-          KML.heading(-129.7),
-          KML.tilt(90.0),
-          KML.altitudeMode("relativeToGround"),
+            KML.longitude(lon),
+            KML.latitude(lat),
+            KML.altitude(0),
+            KML.heading(-129.7),
+            KML.tilt(90.0),
+            KML.altitudeMode("relativeToGround"),
         )
     )
-    tour_doc[gxns+"Tour"].Playlist.append(flyto)
+    tour_doc[gxns + "Tour"].Playlist.append(flyto)
 
 assert Schema('kml22gx.xsd').validate(tour_doc)
 print etree.tostring(tour_doc, pretty_print=True)
 
 # output a KML file (named based on the Python script)
-outfile = file(__file__.rstrip('.py')+'.kml','w')
+outfile = file(__file__.rstrip('.py') + '.kml', 'w')
 outfile.write(etree.tostring(tour_doc, pretty_print=True))

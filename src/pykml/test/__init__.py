@@ -1,3 +1,5 @@
+#
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
 import unittest
 
 from test_factory import *

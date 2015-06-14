@@ -1,17 +1,19 @@
 #!/usr/bin/env python
-'''Example of generating KML from data in a CSV file 
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
+"""Example of generating KML from data in a CSV file
 
 References:
 
-'''
+"""
 import csv
 import urllib2
 from datetime import datetime
 from lxml import etree
 from pykml.factory import KML_ElementMaker as KML
 
+
 def makeExtendedDataElements(datadict):
-    '''Converts a dictionary to ExtendedData/Data elements'''
+    """Converts a dictionary to ExtendedData/Data elements"""
     edata = KML.ExtendedData()
     for key, value in datadict.iteritems():
         edata.append(KML.Data(KML.value(value), name=key + "_"))
@@ -29,31 +31,31 @@ balloonstyle = KML.BalloonStyle(
   <tr><th>Coordinates</th><td>($[Lat_],$[Lat_])</td></tr>
   <tr><th>Region</th><td>$[Region_]</td></tr>
 </table>"""
-    ),
+             ),
 )
 
 doc = KML.Document()
 
 iconstyles = [
-    [2,'ff000000'],
-    [3,'ffff0000'],
-    [4,'ff00ff55'],
-    [5,'ffff00aa'],
-    [6,'ff00ffff'],
-    [7,'ff0000ff'],
+    [2, 'ff000000'],
+    [3, 'ffff0000'],
+    [4, 'ff00ff55'],
+    [5, 'ffff00aa'],
+    [6, 'ff00ffff'],
+    [7, 'ff0000ff'],
 ]
 
 # create a series of Icon Styles
-for threshold,color in iconstyles:
+for threshold, color in iconstyles:
     doc.append(
         KML.Style(
             KML.IconStyle(
                 KML.color(color),
-                KML.scale(threshold/2),
+                KML.scale(threshold / 2),
                 KML.Icon(
                     KML.href("http://maps.google.com/mapfiles/kml/shapes/earthquake.png"),
                 ),
-                KML.hotSpot(x="0.5",y="0",xunits="fraction",yunits="fraction"),
+                KML.hotSpot(x="0.5", y="0", xunits="fraction", yunits="fraction"),
             ),
             balloonstyle,
             id="earthquake-style-{threshold}".format(threshold=threshold),
@@ -63,7 +65,7 @@ for threshold,color in iconstyles:
 doc.append(KML.Folder())
 
 # read in a csv file, and create a placemark for each record
-url="http://earthquake.usgs.gov/earthquakes/catalogs/eqs7day-M2.5.txt"
+url = "http://earthquake.usgs.gov/earthquakes/catalogs/eqs7day-M2.5.txt"
 fileobject = urllib2.urlopen(url)
 for row in csv.DictReader(fileobject):
     timestamp = datetime.strptime(row["Datetime"], "%A, %B %d, %Y %H:%M:%S %Z")
@@ -79,13 +81,14 @@ for row in csv.DictReader(fileobject):
         ),
         makeExtendedDataElements(row),
         KML.Point(
-            KML.coordinates("{0},{1}".format(row["Lon"],row["Lat"]))
+            KML.coordinates("{0},{1}".format(row["Lon"], row["Lat"]))
         )
     )
     doc.Folder.append(pm)
 
 # check if the schema is valid
 from pykml.parser import Schema
+
 schema_gx = Schema("kml22gx.xsd")
 schema_gx.assertValid(doc)
 
