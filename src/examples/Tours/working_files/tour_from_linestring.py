@@ -6,7 +6,7 @@
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 from pykml.parser import parse
 from pykml.factory import nsmap
 from pykml.factory import KML_ElementMaker as KML
@@ -26,7 +26,7 @@ tour_doc = KML.kml(
     )
 )
 
-with open("colorado_river_linestring.kml") as f:
+with open("colorado_river_linestring.kml", 'rb') as f:
     linestring_doc = parse(f)
 
 # get the coordinate string of the first KML coordinate element
@@ -54,5 +54,8 @@ assert Schema('kml22gx.xsd').validate(tour_doc)
 print(etree.tostring(tour_doc, pretty_print=True))
 
 # output a KML file (named based on the Python script)
-outfile = file(__file__.rstrip('.py') + '.kml', 'w')
-outfile.write(etree.tostring(tour_doc, pretty_print=True))
+with open(__file__.rstrip('.py') + '.kml', 'wb') as outfile:
+    outfile.write(etree.tostring(tour_doc,
+                                 pretty_print=True,
+                                 encoding='utf-8',
+                                 xml_declaration=True))

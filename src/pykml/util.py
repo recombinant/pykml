@@ -8,14 +8,13 @@ documents
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 import re
 
 
 def clean_xml_string(input_string):
     """removes invalid characters from an XML string"""
-    from curses import ascii
-    return ''.join(c for c in input_string if ascii.isascii(c))
+    return input_string.encode('ascii', 'ignore').decode('ascii')
 
 
 def format_xml_with_cdata(
@@ -28,7 +27,7 @@ def format_xml_with_cdata(
     root = etree.fromstring(etree.tostring(etree.ElementTree(obj)))
 
     # Create an xpath expression to search for all desired cdata elements
-    xpath = '|'.join(map(lambda tag: '//kml:' + tag, cdata_elements))
+    xpath = '|'.join('//kml:' + tag for tag in cdata_elements)
 
     results = root.xpath(
         xpath,
@@ -115,7 +114,6 @@ def convert_csv_to_kml(
     """Reads a CSV document from a file-like object and converts it to KML"""
 
     import csv
-    # import urllib2
     from pykml.factory import KML_ElementMaker as KML
 
     # create a basic KML document
@@ -241,9 +239,10 @@ def csv2kml():
     Example: csv2kml test.csv
     """
     import sys
-    import urllib2
+    from six.moves.urllib.request import urlopen
     from optparse import OptionParser
     from lxml import etree
+    from pykml.util import format_xml_with_cdata
 
     parser = OptionParser(
         usage="usage: %prog FILENAME_or_URL",
@@ -269,10 +268,10 @@ def csv2kml():
 
     # try to open the URI as both a local file and a remote URL
     try:
-        f = open(uri)
+        f = open(uri, 'rb')
     except IOError:
         try:
-            f = urllib2.urlopen(uri)
+            f = urlopen(uri)
         except ValueError:
             raise ValueError('unable to load URI {0}'.format(uri))
     except:
@@ -294,7 +293,7 @@ def csv2kml():
     except NameError:
         pass  # variable was not defined
     else:
-        f.close
+        f.close()
 
-    kmlstr = format_as_cdata(etree.tostring(kmldoc, pretty_print=True))
+    kmlstr = format_xml_with_cdata(etree.tostring(kmldoc, pretty_print=True))
     sys.stdout.write(kmlstr)

@@ -10,12 +10,11 @@ http://earthquake.usgs.gov/earthquakes/feed/v1.0/csv.php
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 import csv
 from datetime import datetime
-
 from lxml import etree
-
+import six
 from six.moves.urllib.request import urlopen
 from pykml.factory import KML_ElementMaker as KML
 from pykml.parser import Schema
@@ -86,6 +85,11 @@ def main():
     # read in a csv file, and create a placemark for each record
     url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv'
     fileobject = urlopen(url)
+
+    if six.PY3:  # fileobject is bytes, csv requires string
+        import codecs
+        fileobject = codecs.getreader('utf-8')(fileobject)
+
     for row in csv.DictReader(fileobject):
         timestamp = datetime.strptime(row['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
         pm = KML.Placemark(
@@ -111,7 +115,10 @@ def main():
 
     kml = KML.kml(doc)
 
-    print(etree.tostring(format_xml_with_cdata(kml), pretty_print=True))
+    print(etree.tostring(format_xml_with_cdata(kml),
+                         pretty_print=True,
+                         encoding='utf-8',
+                         xml_declaration=True).decode())
 
 
 if __name__ == '__main__':

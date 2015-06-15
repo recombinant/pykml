@@ -8,30 +8,30 @@ from a file or remote URL.
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 import sys
 import os
 import ssl
-import urllib2
 from lxml import etree, objectify
+from six.moves.urllib.request import urlopen
 
 OGCKML_SCHEMA = 'http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd'
 
 
 class Schema():
-    "A class representing an XML Schema used to validate KML documents"
+    """A class representing an XML Schema used to validate KML documents"""
 
     def __init__(self, schema):
         try:
             module_dir = os.path.split(__file__)[0]  # get the module path
             schema_file = os.path.join(module_dir, "schemas", schema)
             # try to open a local file
-            with open(schema_file) as f:
+            with open(schema_file, 'rb') as f:
                 self.schema = etree.XMLSchema(file=f)
         except:
             # try to open a remote URL
             context = ssl._create_unverified_context()
-            f = urllib2.urlopen(schema, context=context)
+            f = urlopen(schema, context=context)
             self.schema = etree.XMLSchema(file=f)
 
     def validate(self, doc):
@@ -104,10 +104,10 @@ def validate_kml():
 
     try:
         # try to open as a file
-        fileobject = open(uri)
+        fileobject = open(uri, 'rb')
     except IOError:
         try:
-            fileobject = urllib2.urlopen(uri)
+            fileobject = urlopen(uri)
         except ValueError:
             raise ValueError('Unable to load URI {0}'.format(uri))
     except:

@@ -3,8 +3,10 @@
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 import unittest
+import xmlunittest
+import os
 from os import path
 from lxml import etree
 from pykml.parser import Schema
@@ -12,7 +14,7 @@ from pykml.parser import parse
 from pykml.factory import KML_ElementMaker as KML
 
 
-class KmlUtilTestCase(unittest.TestCase):
+class KmlUtilTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
     def test_count_elements(self):
         """Tests the counting of elements in a KML document."""
         from pykml.util import count_elements
@@ -22,7 +24,7 @@ class KmlUtilTestCase(unittest.TestCase):
             'testfiles',
             'google_kml_developers_guide/complete_tour_example.kml'
         )
-        with open(test_datafile) as f:
+        with open(test_datafile, 'rb') as f:
             doc = parse(f, schema=Schema('kml22gx.xsd'))
         summary = count_elements(doc)
 
@@ -158,22 +160,27 @@ class KmlUtilTestCase(unittest.TestCase):
                 )
             )
         )
-        self.assertEqual(
-            etree.tostring(format_xml_with_cdata(kmlobj)),
-            '<kml xmlns:gx="http://www.google.com/kml/ext/2.2" '
-                 'xmlns:atom="http://www.w3.org/2005/Atom" '
-                 'xmlns="http://www.opengis.net/kml/2.2">'
-              '<Document>'
-                '<Placemark>'
-                  '<name>foobar</name>'
-                  '<styleUrl>#big_label</styleUrl>'
-                  '<description><![CDATA[<html>]]></description>'
-                  '<text><![CDATA[<html>]]></text>'
-                  '<linkDescription><![CDATA[<html>]]></linkDescription>'
-                  '<displayName><![CDATA[<html>]]></displayName>'
-                '</Placemark>'
-              '</Document>'
-            '</kml>'
+
+        root = format_xml_with_cdata(kmlobj)
+
+        self.assertXmlEquivalentOutputs(
+            etree.tostring(root, encoding='utf-8', xml_declaration=True), (
+                '<?xml version="1.0" encoding="UTF-8"?>'
+                '<kml xmlns:gx="http://www.google.com/kml/ext/2.2" '
+                     'xmlns:atom="http://www.w3.org/2005/Atom" '
+                     'xmlns="http://www.opengis.net/kml/2.2">'
+                  '<Document>'
+                    '<Placemark>'
+                      '<name>foobar</name>'
+                      '<styleUrl>#big_label</styleUrl>'
+                      '<description><![CDATA[<html>]]></description>'
+                      '<text><![CDATA[<html>]]></text>'
+                      '<linkDescription><![CDATA[<html>]]></linkDescription>'
+                      '<displayName><![CDATA[<html>]]></displayName>'
+                    '</Placemark>'
+                  '</Document>'
+                '</kml>'
+            ).encode('utf-8')
         )
 
     def test_convert_csv_to_kml(self):
@@ -183,38 +190,38 @@ class KmlUtilTestCase(unittest.TestCase):
         from pykml.util import format_xml_with_cdata
 
         # create a CSV file for testing
-        csvfile = tempfile.TemporaryFile()
-        csvfile.write('name,snippet,lat,lon\n')
-        csvfile.write('first,The first one,45.0,-90.0\n')
-        csvfile.write('second,The second one,46.0,-89.0\n')
-        csvfile.write('third,"The third one (with quotes)",45.0,-88.0\n')
-        csvfile.seek(0)
+        with tempfile.NamedTemporaryFile(mode='wt', suffix='.csv', delete=False) as csvfile:
+            csvfile_name = csvfile.name
+            csvfile.write('name,snippet,lat,lon\n')
+            csvfile.write('first,The first one,45.0,-90.0\n')
+            csvfile.write('second,The second one,46.0,-89.0\n')
+            csvfile.write('third,"The third one (with quotes)",45.0,-88.0\n')
 
-        kmldoc = convert_csv_to_kml(csvfile)
+        with open(csvfile_name, 'rt') as csvfile:
+            kmldoc = convert_csv_to_kml(csvfile)
 
-        csvfile.close()
+        os.unlink(csvfile_name)
 
-        self.assertEqual(
-            etree.tostring(format_xml_with_cdata(kmldoc)),
-            '<kml xmlns:gx="http://www.google.com/kml/ext/2.2" '
-                   'xmlns:atom="http://www.w3.org/2005/Atom" '
-                'xmlns="http://www.opengis.net/kml/2.2">'
+        root = format_xml_with_cdata(kmldoc)
+
+        self.assertXmlEquivalentOutputs(
+            etree.tostring(root, encoding='utf-8', xml_declaration=True), (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<kml xmlns="http://www.opengis.net/kml/2.2" '
+                 'xmlns:atom="http://www.w3.org/2005/Atom" '
+                 'xmlns:gx="http://www.google.com/kml/ext/2.2">'
               '<Document>'
                 '<Folder>'
                   '<name>KmlFile</name>'
                   '<Placemark>'
                     '<name>first</name>'
                     '<Snippet maxLines="2">The first one</Snippet>'
-                    '<description>'
-                    '<![CDATA['
-                      '<table border="1"'
-                        '<tr><th>name</th><td>first</td></tr>'
-                        '<tr><th>snippet</th><td>The first one</td></tr>'
-                        '<tr><th>lat</th><td>45.0</td></tr>'
-                        '<tr><th>lon</th><td>-90.0</td></tr>'
-                      '</table>'
-                    ']]>'
-                    '</description>'
+                    '<description><![CDATA[<table border="1"'
+                      '<tr><th>name</th><td>first</td></tr>'
+                      '<tr><th>snippet</th><td>The first one</td></tr>'
+                      '<tr><th>lat</th><td>45.0</td></tr>'
+                      '<tr><th>lon</th><td>-90.0</td></tr>'
+                      '</table>]]></description>'
                     '<Point>'
                       '<coordinates>-90.0,45.0</coordinates>'
                     '</Point>'
@@ -222,16 +229,12 @@ class KmlUtilTestCase(unittest.TestCase):
                   '<Placemark>'
                     '<name>second</name>'
                     '<Snippet maxLines="2">The second one</Snippet>'
-                    '<description>'
-                    '<![CDATA['
-                      '<table border="1"'
-                        '<tr><th>name</th><td>second</td></tr>'
-                        '<tr><th>snippet</th><td>The second one</td></tr>'
-                        '<tr><th>lat</th><td>46.0</td></tr>'
-                        '<tr><th>lon</th><td>-89.0</td></tr>'
-                      '</table>'
-                    ']]>'
-                    '</description>'
+                    '<description><![CDATA[<table border="1"'
+                      '<tr><th>name</th><td>second</td></tr>'
+                      '<tr><th>snippet</th><td>The second one</td></tr>'
+                      '<tr><th>lat</th><td>46.0</td></tr>'
+                      '<tr><th>lon</th><td>-89.0</td></tr>'
+                      '</table>]]></description>'
                     '<Point>'
                       '<coordinates>-89.0,46.0</coordinates>'
                     '</Point>'
@@ -239,16 +242,12 @@ class KmlUtilTestCase(unittest.TestCase):
                   '<Placemark>'
                     '<name>third</name>'
                     '<Snippet maxLines="2">The third one (with quotes)</Snippet>'
-                    '<description>'
-                    '<![CDATA['
-                      '<table border="1"'
-                        '<tr><th>name</th><td>third</td></tr>'
-                        '<tr><th>snippet</th><td>The third one (with quotes)</td></tr>'
-                        '<tr><th>lat</th><td>45.0</td></tr>'
-                        '<tr><th>lon</th><td>-88.0</td></tr>'
-                      '</table>'
-                    ']]>'
-                    '</description>'
+                    '<description><![CDATA[<table border="1"'
+                      '<tr><th>name</th><td>third</td></tr>'
+                      '<tr><th>snippet</th><td>The third one (with quotes)</td></tr>'
+                      '<tr><th>lat</th><td>45.0</td></tr>'
+                      '<tr><th>lon</th><td>-88.0</td></tr>'
+                      '</table>]]></description>'
                     '<Point>'
                       '<coordinates>-88.0,45.0</coordinates>'
                     '</Point>'
@@ -256,6 +255,7 @@ class KmlUtilTestCase(unittest.TestCase):
                 '</Folder>'
               '</Document>'
             '</kml>'
+            ).encode('utf-8')
         )
 
     def test_convert_csv_to_kml_missing_coordinate_fields(self):
@@ -264,23 +264,25 @@ class KmlUtilTestCase(unittest.TestCase):
         from pykml.util import convert_csv_to_kml
 
         # create a CSV file for testing
-        csvfile = tempfile.TemporaryFile()
-        csvfile.write('name,snippet,y,x\n')
-        csvfile.write('first,The first one,45.0,-90.0\n')
-        csvfile.write('second,The second one,46.0,-89.0\n')
-        csvfile.seek(0)
+        with tempfile.NamedTemporaryFile(mode='wt', suffix='.csv', delete=False) as csvfile:
+            csvfile_name = csvfile.name
+            csvfile.write('name,snippet,y,x\n')
+            csvfile.write('first,The first one,45.0,-90.0\n')
+            csvfile.write('second,The second one,46.0,-89.0\n')
 
-        try:
-            convert_csv_to_kml(csvfile)
-        except KeyError:
-            self.assertTrue(True)
-        except:
-            raise
-        finally:
-            csvfile.close()
+        with open(csvfile_name, mode='rt') as csvfile:
+            # TODO: with self.assertRaises(KeyError):
+            try:
+                convert_csv_to_kml(csvfile)
+            except KeyError:
+                self.assertTrue(True)
+            except:
+                raise
+
+        os.unlink(csvfile_name)
 
     def test_clean_xml_string(self):
         from pykml.util import clean_xml_string
 
         self.assertEqual(clean_xml_string('\xce'), '')
-        # self.assertEqual(clean_xml_string('Grande-\xcele'),'Grande-le')
+        self.assertEqual(clean_xml_string('Grande-Île'), 'Grande-le')

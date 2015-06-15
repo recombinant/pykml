@@ -13,7 +13,8 @@ KML objects with the appropriate namespace prefixes.
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
+import os
 from lxml import etree, objectify
 
 nsmap = {
@@ -62,14 +63,16 @@ def get_factory_object_name(namespace):
 
 
 def write_python_script_for_kml_document(doc):
-    "Generates a python script that will construct a given KML document"
-    import StringIO
+    """Generates a python script that will construct a given KML document"""
+    from six import StringIO, BytesIO
     from pykml.helpers import separate_namespace
 
-    output = StringIO.StringIO()
+    output = StringIO()
     indent_size = 2
 
-    # use print function as this is compatible with PY2 & PY3
+    # use unicode literals and print function as these are compatible
+    # with PY2 & PY3
+    output.write('from __future__ import unicode_literals\n')
     output.write('from __future__ import print_function\n')
 
     # add the etree package so that comments can be handled
@@ -82,7 +85,7 @@ def write_python_script_for_kml_document(doc):
     output.write('\n')
 
     level = 0
-    xml = StringIO.StringIO(etree.tostring(doc))
+    xml = BytesIO(etree.tostring(doc, encoding='utf-8', xml_declaration=True))
     context = etree.iterparse(xml, events=("start", "end", "comment"))
     output.write('doc = ')
     last_action = None
@@ -161,17 +164,19 @@ def write_python_script_for_kml_document(doc):
             elif action in ('end'):
                 level -= 1
                 if last_action == 'start':
-                    output.pos -= 1
+                    output.seek(output.tell() - 1, os.SEEK_SET)  # TODO: ?
                     indent = ''
                 else:
                     indent = ' ' * level * indent_size
+                # NOTE: iteration order is implementation dependent
+                # etree does not guarantee to preserve attribute list order
                 for att, val in elem.items():
                     output.write('{0}  {1}="{2}",\n'.format(indent, att, val))
                 output.write('{0}),\n'.format(indent))
         last_action = action
 
     # remove the last comma
-    output.pos -= 2
+    output.seek(output.tell() - 2, os.SEEK_SET)  # TODO: is this correct ?
     output.truncate()
     output.write('\n')
 
@@ -185,7 +190,10 @@ def write_python_script_for_kml_document(doc):
         ))
 
     # add python code to print out the KML document
-    output.write('print(etree.tostring(etree.ElementTree(doc),pretty_print=True))\n')
+    output.write('print(etree.tostring(etree.ElementTree(doc), \n'
+                 '      encoding=\'utf-8\', \n'
+                 '      xml_declaration=True, \n'
+                 '      pretty_print=True).decode(\'utf-8\'))\n')
 
     contents = output.getvalue()
     output.close()
@@ -193,8 +201,8 @@ def write_python_script_for_kml_document(doc):
 
 
 def kml2pykml():
-    "Parse a KML file and generates a pyKML script"
-    import urllib2
+    """Parse a KML file and generates a pyKML script"""
+    from six.moves.urllib.request import urlopen
     from pykml.parser import parse
     from optparse import OptionParser
 
@@ -208,11 +216,11 @@ def kml2pykml():
     else:
         uri = args[0]
     try:
-        with open(uri) as f:
+        with open(uri, 'rb') as f:
             doc = parse(f, schema=None)
     except IOError:
         try:
-            f = urllib2.urlopen(uri)
+            f = urlopen(uri)
             doc = parse(f, schema=None)
         finally:
             # pass
@@ -221,5 +229,5 @@ def kml2pykml():
             except NameError:
                 pass  # variable was not defined
             else:
-                f.close
+                f.close()
     print(write_python_script_for_kml_document(doc))

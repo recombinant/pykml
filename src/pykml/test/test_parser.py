@@ -3,12 +3,13 @@
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 import unittest
 from os import path
 import ssl
-import urllib2
-from StringIO import StringIO
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.error import URLError
+from six import BytesIO
 from lxml import etree
 from pykml.parser import Schema
 from pykml.parser import fromstring
@@ -32,15 +33,16 @@ class ParseKmlOgcTestCase(unittest.TestCase):
     
     def test_fromstring_kml_document(self):
         "Tests the parsing of an valid KML string"
-        test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'
+        test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'.encode('ascii')
         tree = fromstring(test_kml, schema=Schema("ogckml22.xsd"))
-        self.assertEquals(etree.tostring(tree), test_kml)
+        self.assertEqual(etree.tostring(tree, encoding='ascii'), test_kml)
         tree = fromstring(test_kml)
-        self.assertEquals(etree.tostring(tree), test_kml)
+        self.assertEqual(etree.tostring(tree, encoding='ascii'), test_kml)
     
     def test_fromstring_invalid_kml_document(self):
         "Tests the parsing of an invalid KML string"
         test_kml = '<bad_element />'
+        # TODO: with self.assertRaises(etree.XMLSyntaxError):
         try:
             tree = fromstring(test_kml, schema=Schema("ogckml22.xsd"))
             self.assertTrue(False)
@@ -51,17 +53,18 @@ class ParseKmlOgcTestCase(unittest.TestCase):
     
     def test_parse_kml_document(self):
         "Tests the parsing of an valid KML file object"
-        test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'
-        fileobject = StringIO(test_kml)
+        test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'.encode('ascii')
+        fileobject = BytesIO(test_kml)
         schema = Schema("ogckml22.xsd")
         tree = parse(fileobject, schema=schema)
-        self.assertEquals(etree.tostring(tree), test_kml)
+        self.assertEqual(etree.tostring(tree), test_kml)
         tree = parse(fileobject, schema=schema)
-        self.assertEquals(etree.tostring(tree), test_kml)
+        self.assertEqual(etree.tostring(tree), test_kml)
     
     def test_parse_invalid_kml_document(self):
         "Tests the parsing of an invalid KML document"
-        fileobject = StringIO('<bad_element />')
+        fileobject = BytesIO('<bad_element />'.encode('ascii'))
+        # TODO: with self.assertRaises(etree.XMLSyntaxError):
         try:
             tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
             self.assertTrue(False)
@@ -78,15 +81,16 @@ class ParseKmlOgcTestCase(unittest.TestCase):
         # url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
         context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url, context=context)
+            fileobject = urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
-            self.assertEquals(
-                etree.tostring(tree)[:78],
+            self.assertEqual(
+                etree.tostring(tree)[:78], (
                 '<kml xmlns="http://www.opengis.net/kml/2.2">'
                   '<Document>'
                     '<name>KML Samples</name>'
+                ).encode('ascii')
             )
-        except urllib2.URLError:
+        except URLError:
             print('Unable to access the URL. Skipping test...')
     
     def test_parse_kml_file_with_cdata(self):
@@ -97,10 +101,10 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             'google_kml_tutorial/using_the_cdata_element.kml'
         )
         # parse with validation
-        with open(test_datafile) as f:
+        with open(test_datafile, 'rb') as f:
             doc = parse(f, schema=Schema('ogckml22.xsd'))
-        self.assertEquals(
-            etree.tostring(doc),
+        self.assertEqual(
+            etree.tostring(doc, encoding='ascii'), (
             '<kml xmlns="http://www.opengis.net/kml/2.2">'
               '<Document>'
                 '<Placemark>'
@@ -113,18 +117,19 @@ class ParseKmlOgcTestCase(unittest.TestCase):
                     '          references.</font></p>\n'
                     '        ]]>'
                   '</description>'
-                '<Point>'
-                  '<coordinates>102.595626,14.996729</coordinates>'
-                '</Point>'
-              '</Placemark>'
-            '</Document>'
-          '</kml>'
+                  '<Point>'
+                    '<coordinates>102.595626,14.996729</coordinates>'
+                  '</Point>'
+                '</Placemark>'
+              '</Document>'
+            '</kml>'
+            ).encode('ascii')
         )
         # parse without validation
-        with open(test_datafile) as f:
+        with open(test_datafile, 'rb') as f:
             doc2 = parse(f)
-        self.assertEquals(
-            etree.tostring(doc2),
+        self.assertEqual(
+            etree.tostring(doc2), (
             '<kml xmlns="http://www.opengis.net/kml/2.2">'
               '<Document>'
                 '<Placemark>'
@@ -137,12 +142,13 @@ class ParseKmlOgcTestCase(unittest.TestCase):
                     '          references.</font></p>\n'
                     '        ]]>'
                   '</description>'
-                '<Point>'
-                  '<coordinates>102.595626,14.996729</coordinates>'
-                '</Point>'
-              '</Placemark>'
-            '</Document>'
-          '</kml>'
+                  '<Point>'
+                    '<coordinates>102.595626,14.996729</coordinates>'
+                  '</Point>'
+                '</Placemark>'
+              '</Document>'
+            '</kml>'
+            ).encode('ascii')
         )
     
     def test_parse_invalid_ogc_kml_document(self):
@@ -151,11 +157,12 @@ class ParseKmlOgcTestCase(unittest.TestCase):
         """
         url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
         context = ssl._create_unverified_context()
+        # TODO: with self.assertRaises(etree.XMLSyntaxError):
         try:
-            fileobject = urllib2.urlopen(url, context=context)
+            fileobject = urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
             self.assertTrue(False)
-        except urllib2.URLError:
+        except URLError:
             print('Unable to access the URL. Skipping test...')
         except etree.XMLSyntaxError:
             self.assertTrue(True)
@@ -171,17 +178,18 @@ class ParseKmlGxTestCase(unittest.TestCase):
         url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
         context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url, context=context)
+            fileobject = urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema('kml22gx.xsd'))
-            self.assertEquals(
-                etree.tostring(tree)[:185],
+            self.assertEqual(
+                etree.tostring(tree, encoding='ascii')[:185], (
                 '<kml xmlns="http://www.opengis.net/kml/2.2" '
                      'xmlns:gx="http://www.google.com/kml/ext/2.2">'
                     '<!-- required when using gx-prefixed elements -->'
                     '<Placemark>'
                       '<name>gx:altitudeMode Example</name>'
+                ).encode('ascii')
             )
-        except urllib2.URLError:
+        except URLError:
             print('Unable to access the URL. Skipping test...')
     
     def test_parse_kml_file(self):
@@ -192,13 +200,13 @@ class ParseKmlGxTestCase(unittest.TestCase):
             'google_kml_developers_guide/complete_tour_example.kml'
         )
         # parse without validation
-        with open(test_datafile) as f:
+        with open(test_datafile, 'rb') as f:
             doc = parse(f)
         # parse with validation (local schema file)
-        with open(test_datafile) as f:
+        with open(test_datafile, 'rb') as f:
             doc = parse(f, schema=Schema('kml22gx.xsd'))
         # parse with validation (remote schema file)
-        with open(test_datafile) as f:
+        with open(test_datafile, 'rb') as f:
             doc = parse(f, schema=Schema('https://developers.google.com/kml/schema/kml22gx.xsd'))
         self.assertTrue(True)
     
@@ -207,16 +215,17 @@ class ParseKmlGxTestCase(unittest.TestCase):
         url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
         context = ssl._create_unverified_context()
         try:
-            fileobject = urllib2.urlopen(url, context=context)
+            fileobject = urlopen(url, context=context)
             tree = parse(fileobject, schema=Schema('kml22gx.xsd'))
-            self.assertEquals(
-                etree.tostring(tree)[:137],
+            self.assertEqual(
+                etree.tostring(tree, encoding='ascii')[:137], (
                 '<kml xmlns="http://www.opengis.net/kml/2.2" '
                      'xmlns:gx="http://www.google.com/kml/ext/2.2">'
                     '<Document>'
                       '<name>gx:AnimatedUpdate example</name>'
+                ).encode('ascii')
             )
-        except urllib2.URLError:
+        except URLError:
             print('Unable to access the URL. Skipping test...')
 
 if __name__ == '__main__':

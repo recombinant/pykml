@@ -6,7 +6,7 @@
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 from pykml.factory import nsmap
 from pykml.factory import KML_ElementMaker as KML
 from pykml.factory import GX_ElementMaker as GX
@@ -199,8 +199,14 @@ for feature in feature_list:
 # check that the KML document is valid using the Google Extension XML Schema
 assert (Schema("kml22gx.xsd").validate(tour_doc))
 
-print(etree.tostring(tour_doc, pretty_print=True))
+print(etree.tostring(tour_doc,
+                     pretty_print=True,
+                     xml_declaration=True,
+                     encoding='utf-8').decode())
 
 # output a KML file (named based on the Python script)
-outfile = file(__file__.rstrip('.py') + '.kml', 'w')
-outfile.write(etree.tostring(tour_doc, pretty_print=True))
+with open(__file__.rstrip('.py') + '.kml', 'wb') as outfile:
+    outfile.write(etree.tostring(tour_doc,
+                                 pretty_print=True,
+                                 xml_declaration=True,
+                                 encoding='utf-8'))

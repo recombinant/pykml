@@ -96,8 +96,14 @@ for t in drange(0, 15, tstep):
     tour_doc.Folder[GX_ns + "Tour"].Playlist.append(flyto)
 
 assert Schema('kml22gx.xsd').validate(tour_doc)
-print(etree.tostring(tour_doc, pretty_print=True))
+print(etree.tostring(tour_doc,
+                     pretty_print=True,
+                     encoding='utf-8',
+                     xml_declaration=True).decode())
 
 # output a KML file (named based on the Python script)
-outfile = file(__file__.rstrip('.py') + '.kml', 'w')
-outfile.write(etree.tostring(tour_doc, pretty_print=True))
+with open(__file__.rstrip('.py') + '.kml', 'wb') as outfile:
+    outfile.write(etree.tostring(tour_doc,
+                                 pretty_print=True,
+                                 encoding='utf-8',
+                                 xml_declaration=True))
