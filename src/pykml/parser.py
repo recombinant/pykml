@@ -10,13 +10,14 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import os
-from os import sys
 import ssl
 from optparse import OptionParser
+from contextlib import closing
 
 from lxml import etree, objectify
 
 from six.moves.urllib.request import urlopen
+from pykml import version as pykml_version
 
 OGCKML_SCHEMA = 'http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd'
 
@@ -34,8 +35,8 @@ class Schema:
         except:
             # try to open a remote URL
             context = ssl._create_unverified_context()
-            f = urlopen(schema, context=context)
-            self.schema = etree.XMLSchema(file=f)
+            with closing(urlopen(schema, context=context)) as f:
+                self.schema = etree.XMLSchema(file=f)
 
     def validate(self, doc):
         """Validates a KML document
@@ -90,9 +91,11 @@ def validate_kml():
 
     Example: validate_kml test.kml
     """
+    from pykml.util import open_pykml_uri
+
     parser = OptionParser(
-        usage="usage: %prog FILENAME_or_URL",
-        version="%prog 0.1",
+        usage='usage: %prog FILENAME_or_URL',
+        version='%prog {}'.format(pykml_version),
     )
     parser.add_option("--schema", dest="schema_uri",
                       help="URI of the XML Schema Document used for validation")
@@ -102,36 +105,29 @@ def validate_kml():
     else:
         uri = args[0]
 
-    try:
-        # try to open as a file
-        fileobject = open(uri, 'rb')
-    except IOError:
+    with open_pykml_uri(uri, mode='rb') as f:
         try:
-            fileobject = urlopen(uri)
-        except ValueError:
-            raise ValueError('Unable to load URI {0}'.format(uri))
-    except:
-        raise
+            print('Parsing "{}"'.format(uri))
+            doc = parse(f, schema=None)
 
-    doc = parse(fileobject, schema=None)
+        except etree.XMLSyntaxError as e:
+            print('Invalid XML: {}'.format(e.msg))
+            exit(1)
 
+    # load the schema
     if options.schema_uri:
         schema = Schema(options.schema_uri)
     else:
         # by default, use the OGC base schema
-        sys.stdout.write("Validating against the default schema: {0}\n".format(OGCKML_SCHEMA))
+        print('Validating against the default schema: {0}'.format(OGCKML_SCHEMA))
         schema = Schema(OGCKML_SCHEMA)
 
-    sys.stdout.write("Validating document...\n")
-    if schema.validate(doc):
-        sys.stdout.write("Congratulations! The file is valid.\n")
-    else:
-        sys.stdout.write("Uh-oh! The KML file is invalid.\n")
-        sys.stdout.write(schema.assertValid(doc))
-    # close the fileobject, if needed
+    print('Validating document...')
     try:
-        fileobject
-    except NameError:
-        pass  # variable was not defined
-    else:
-        fileobject.close()
+        schema.assertValid(doc)
+        print('Congratulations! The file is valid.')
+
+    except etree.DocumentInvalid as e:
+        print('Uh-oh! The KML file is invalid.')
+        for line in e.args:
+            print(line)

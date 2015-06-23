@@ -10,13 +10,15 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import re
-import sys
+from contextlib import contextmanager
+import ssl
 from optparse import OptionParser
 import csv
 
 from lxml import etree
 
 from pykml.factory import KML_ElementMaker as KML
+from pykml import version as pykml_version
 from six.moves.urllib.request import urlopen
 
 
@@ -27,8 +29,10 @@ def clean_xml_string(input_string):
 
 def format_xml_with_cdata(
         obj,
-        cdata_elements=('description', 'text', 'linkDescription', 'displayName', )
-):
+        cdata_elements=('description',
+                        'text',
+                        'linkDescription',
+                        'displayName', )):
     # Convert Objectify document to lxml.etree (is there a better way?)
     root = etree.fromstring(etree.tostring(etree.ElementTree(obj)))
 
@@ -104,6 +108,25 @@ def to_wkt_list(doc):
                 wkt = 'POLYGON ({rings})'.format(rings=', '.join(ringlist))
                 ring_wkt_list.append(wkt)
     return ring_wkt_list
+
+
+@contextmanager
+def open_pykml_uri(uri, mode='rt'):
+    """
+    Contextmanager to open a local or remote file and close when complete.
+
+    :param uri: path to local file or url to remote file
+    :return: handle to opened file
+    """
+    try:
+        f = open(uri, mode)
+    except IOError:
+        context = ssl._create_unverified_context()
+        f = urlopen(uri, context=context)
+
+    yield f
+
+    f.close()
 
 
 def convert_csv_to_kml(
@@ -240,8 +263,8 @@ def csv2kml():
     Example: csv2kml test.csv
     """
     parser = OptionParser(
-        usage="usage: %prog FILENAME_or_URL",
-        version="%prog 0.1",
+        usage='usage: %prog FILENAME_or_URL',
+        version='%prog {}'.format(pykml_version),
     )
     parser.add_option("--longitude_field", dest="longitude_field",
                       help="name of the column that contains longitude data")
@@ -262,33 +285,20 @@ def csv2kml():
         uri = args[0]
 
     # try to open the URI as both a local file and a remote URL
-    try:
-        f = open(uri, 'rb')
-    except IOError:
-        try:
-            f = urlopen(uri)
-        except ValueError:
-            raise ValueError('unable to load URI {0}'.format(uri))
-    except:
-        raise
+    with open_pykml_uri(uri) as f:
+        kmldoc = convert_csv_to_kml(
+            f,
+            latitude_field=options.latitude_field,
+            longitude_field=options.longitude_field,
+            altitude_field=options.altitude_field,
+            name_field=options.name_field,
+            description_field=options.description_field,
+            snippet_field=options.snippet_field,
+        )
 
-    kmldoc = convert_csv_to_kml(
-        f,
-        latitude_field=options.latitude_field,
-        longitude_field=options.longitude_field,
-        altitude_field=options.altitude_field,
-        name_field=options.name_field,
-        description_field=options.description_field,
-        snippet_field=options.snippet_field,
-    )
+    root = format_xml_with_cdata(kmldoc)
 
-    # close the fileobject, if needed
-    try:
-        f
-    except NameError:
-        pass  # variable was not defined
-    else:
-        f.close()
-
-    kmlstr = format_xml_with_cdata(etree.tostring(kmldoc, pretty_print=True))
-    sys.stdout.write(kmlstr)
+    print(etree.tostring(root,
+                         encoding='ascii',
+                         pretty_print=True,
+                         xml_declaration=True).decode('ascii'))

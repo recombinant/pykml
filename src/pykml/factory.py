@@ -15,14 +15,15 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import os
+from os import sys
 from collections import OrderedDict
 from optparse import OptionParser
 
 from lxml import etree, objectify
 from six import StringIO, BytesIO
 
-from six.moves.urllib.request import urlopen
 from pykml.parser import parse
+from pykml import version as pykml_version
 
 nsmap = OrderedDict([
     (None, 'http://www.opengis.net/kml/2.2'),
@@ -207,30 +208,20 @@ def write_python_script_for_kml_document(doc):
 
 
 def kml2pykml():
-    """Parse a KML file and generates a pyKML script"""
+    """Parses a KML file and generates a pyKML script"""
+    from pykml.util import open_pykml_uri
 
     parser = OptionParser(
-        usage="usage: %prog FILENAME_or_URL",
-        version="%prog 0.1",
+        usage='usage: %prog FILENAME_or_URL',
+        version='%prog {}'.format(pykml_version),
     )
     (options, args) = parser.parse_args()
     if len(args) != 1:
         parser.error("wrong number of arguments")
     else:
         uri = args[0]
-    try:
-        with open(uri, 'rb') as f:
-            doc = parse(f, schema=None)
-    except IOError:
-        try:
-            f = urlopen(uri)
-            doc = parse(f, schema=None)
-        finally:
-            # pass
-            try:
-                f
-            except NameError:
-                pass  # variable was not defined
-            else:
-                f.close()
-    print(write_python_script_for_kml_document(doc))
+
+    with open_pykml_uri(uri, mode='rb') as f:
+        doc = parse(f, schema=None)
+
+    sys.stdout.write(write_python_script_for_kml_document(doc))
