@@ -5,22 +5,28 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import unittest
-import xmlunittest
+import os
 from os import path
+import tempfile
+import subprocess
+
+import xmlunittest
+
 from lxml import etree
 import six
+
 from pykml.parser import Schema
 from pykml.parser import parse
 from pykml.factory import KML_ElementMaker as KML
 from pykml.factory import ATOM_ElementMaker as ATOM
 from pykml.factory import GX_ElementMaker as GX
+from pykml.factory import get_factory_object_name
+from pykml.factory import write_python_script_for_kml_document
 
 
 class KmlFactoryTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
     def test_get_factory_object_name(self):
-        "Tests obtaining a factory object"
-        from pykml.factory import get_factory_object_name
-
+        """Tests obtaining a factory object"""
         self.assertEqual(
             get_factory_object_name('http://www.opengis.net/kml/2.2'),
             'KML'
@@ -180,9 +186,6 @@ class KmlFactoryTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_kml_document_with_cdata_description(self):
         """Tests the creation of a KML document with a CDATA element."""
-        from pykml.factory import KML_ElementMaker as KML
-        from lxml import etree
-
         doc = KML.description(
             '<h1>CDATA Tags are useful!</h1>'
         )
@@ -199,12 +202,6 @@ class KmlFactoryTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_kml_document_with_cdata_description_2(self):
         """Tests the creation of a KML document with a CDATA element."""
-
-        from pykml.factory import KML_ElementMaker as KML
-        from pykml.factory import ATOM_ElementMaker as ATOM
-        from pykml.factory import GX_ElementMaker as GX
-        from lxml import etree
-
         doc = KML.kml(
             KML.Document(
                 KML.Placemark(
@@ -248,8 +245,6 @@ class KmlFactoryTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
     def test_write_python_script_for_kml_document(self):
         """Tests the creation of a trivial OGC KML document."""
-        from pykml.factory import write_python_script_for_kml_document
-
         doc = KML.kml(
             KML.Document(
                 ATOM.author(
@@ -297,8 +292,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_write_python_script_for_multiline_coordinate_string(self):
         """Tests the creation of a trivial OGC KML document."""
-        from pykml.factory import write_python_script_for_kml_document
-
         test_datafile = path.join(
             path.dirname(__file__),
             'testfiles',
@@ -350,11 +343,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_write_python_script_for_kml_document_with_cdata(self):
         """Tests the creation of an OGC KML document with a cdata tag"""
-        import os
-        import tempfile
-        from pykml.parser import parse
-        from pykml.factory import write_python_script_for_kml_document
-
         test_datafile = path.join(
             path.dirname(__file__),
             'testfiles',
@@ -402,7 +390,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
             f.write(script)
 
         # execute the temporary python file to create a KML file
-        import subprocess
 
         current_env = os.environ.copy()
         current_env["PYTHONPATH"] = os.path.abspath(
@@ -430,11 +417,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_write_python_script_for_kml_document_with_namespaces(self):
         """Tests the creation of an OGC KML document with several namespaces"""
-        import os
-        import tempfile
-        from pykml.parser import parse
-        from pykml.factory import write_python_script_for_kml_document
-
         test_datafile = path.join(
             path.dirname(__file__),
             'testfiles',
@@ -454,7 +436,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
         # execute the temporary python file to create a KML file
         # set the PYTHONPATH variable so that it references the root
         # of the pyKML library
-        import subprocess
 
         current_env = os.environ.copy()
         current_env["PYTHONPATH"] = os.path.abspath(
@@ -478,11 +459,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_write_python_script_for_kml_document_with_comments(self):
         """Tests the creation of an OGC KML document with several comments"""
-        import os
-        import tempfile
-        from pykml.parser import parse
-        from pykml.factory import write_python_script_for_kml_document
-
         test_datafile = path.join(
             path.dirname(__file__),
             'testfiles',
@@ -500,7 +476,6 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
             f.write(script)
 
         # execute the temporary python file to create a KML file
-        import subprocess
 
         current_env = os.environ.copy()
         current_env["PYTHONPATH"] = os.path.abspath(

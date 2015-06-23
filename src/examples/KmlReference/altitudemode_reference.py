@@ -3,8 +3,8 @@
 """Generate a KML string that matches the altitudemode example.
 
 References:
-http://code.google.com/apis/kml/documentation/kmlreference.html#gxaltitudemode
-http://code.google.com/apis/kml/documentation/kmlfiles/altitudemode_reference.kml
+https://developers.google.com/kml/documentation/kmlreference#gxaltitudemode
+https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml
 """
 from __future__ import division
 from __future__ import absolute_import

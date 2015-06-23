@@ -7,17 +7,19 @@ from __future__ import unicode_literals
 import unittest
 from os import path
 import ssl
-from six.moves.urllib.request import urlopen
-from six.moves.urllib.error import URLError
+
 from six import BytesIO
 from lxml import etree
+
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.error import URLError
 from pykml.parser import Schema
 from pykml.parser import fromstring
 from pykml.parser import parse
 
 
 class ValidatorTestCase(unittest.TestCase):
-    
+
     def test_initialize_schema(self):
         """Tests the creation Schema instance"""
         schema = Schema("ogckml22.xsd")
@@ -29,18 +31,18 @@ class ValidatorTestCase(unittest.TestCase):
 
 
 class ParseKmlOgcTestCase(unittest.TestCase):
-    "A collection of tests related to parsing KML OGC documents"
-    
+    """A collection of tests related to parsing KML OGC documents"""
+
     def test_fromstring_kml_document(self):
-        "Tests the parsing of an valid KML string"
+        """Tests the parsing of an valid KML string"""
         test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'.encode('ascii')
         tree = fromstring(test_kml, schema=Schema("ogckml22.xsd"))
         self.assertEqual(etree.tostring(tree, encoding='ascii'), test_kml)
         tree = fromstring(test_kml)
         self.assertEqual(etree.tostring(tree, encoding='ascii'), test_kml)
-    
+
     def test_fromstring_invalid_kml_document(self):
-        "Tests the parsing of an invalid KML string"
+        """Tests the parsing of an invalid KML string"""
         test_kml = '<bad_element />'
         # TODO: with self.assertRaises(etree.XMLSyntaxError):
         try:
@@ -50,9 +52,9 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             self.assertTrue(True)
         except:
             self.assertTrue(False)
-    
+
     def test_parse_kml_document(self):
-        "Tests the parsing of an valid KML file object"
+        """Tests the parsing of an valid KML file object"""
         test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'.encode('ascii')
         fileobject = BytesIO(test_kml)
         schema = Schema("ogckml22.xsd")
@@ -60,9 +62,9 @@ class ParseKmlOgcTestCase(unittest.TestCase):
         self.assertEqual(etree.tostring(tree), test_kml)
         tree = parse(fileobject, schema=schema)
         self.assertEqual(etree.tostring(tree), test_kml)
-    
+
     def test_parse_invalid_kml_document(self):
-        "Tests the parsing of an invalid KML document"
+        """Tests the parsing of an invalid KML document"""
         fileobject = BytesIO('<bad_element />'.encode('ascii'))
         # TODO: with self.assertRaises(etree.XMLSyntaxError):
         try:
@@ -72,9 +74,9 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             self.assertTrue(True)
         except:
             self.assertTrue(False)
-    
+
     def test_parse_kml_url(self):
-        "Tests the parsing of a KML URL"
+        """Tests the parsing of a KML URL"""
         url = 'https://developers.google.com/kml/documentation/KML_Samples.kml'
         # url = 'http://kml-samples.googlecode.com/svn/trunk/kml/Document/doc-with-id.kml'
         # url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
@@ -92,9 +94,9 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             )
         except URLError:
             print('Unable to access the URL. Skipping test...')
-    
+
     def test_parse_kml_file_with_cdata(self):
-        "Tests the parsing of a local KML file, with a CDATA description string"
+        """Tests the parsing of a local KML file, with a CDATA description string"""
         test_datafile = path.join(
             path.dirname(__file__),
             'testfiles',
@@ -150,7 +152,7 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             '</kml>'
             ).encode('ascii')
         )
-    
+
     def test_parse_invalid_ogc_kml_document(self):
         """Tests the parsing of an invalid KML document.  Note that this KML
         document uses elements that are not in the OGC KML spec.
@@ -171,10 +173,10 @@ class ParseKmlOgcTestCase(unittest.TestCase):
 
 
 class ParseKmlGxTestCase(unittest.TestCase):
-    "A collection of tests related to parsing KML Google Extension documents"
-    
+    """A collection of tests related to parsing KML Google Extension documents"""
+
     def test_parse_kml_url(self):
-        "Tests the parsing of a KML URL"
+        """Tests the parsing of a KML URL"""
         url = 'https://developers.google.com/kml/documentation/kmlfiles/altitudemode_reference.kml'
         context = ssl._create_unverified_context()
         try:
@@ -191,9 +193,9 @@ class ParseKmlGxTestCase(unittest.TestCase):
             )
         except URLError:
             print('Unable to access the URL. Skipping test...')
-    
+
     def test_parse_kml_file(self):
-        "Tests the parsing of a local KML file, with validation"
+        """Tests the parsing of a local KML file, with validation"""
         test_datafile = path.join(
             path.dirname(__file__),
             'testfiles',
@@ -209,9 +211,9 @@ class ParseKmlGxTestCase(unittest.TestCase):
         with open(test_datafile, 'rb') as f:
             doc = parse(f, schema=Schema('https://developers.google.com/kml/schema/kml22gx.xsd'))
         self.assertTrue(True)
-    
+
     def test_parse_kml_url_2(self):
-        "Tests the parsing of a KML URL"
+        """Tests the parsing of a KML URL"""
         url = 'https://developers.google.com/kml/documentation/kmlfiles/animatedupdate_example.kml'
         context = ssl._create_unverified_context()
         try:

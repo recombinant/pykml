@@ -15,13 +15,20 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import os
-from lxml import etree, objectify
+from collections import OrderedDict
+from optparse import OptionParser
 
-nsmap = {
-    None: "http://www.opengis.net/kml/2.2",
-    'atom': "http://www.w3.org/2005/Atom",
-    'gx': "http://www.google.com/kml/ext/2.2",
-}
+from lxml import etree, objectify
+from six import StringIO, BytesIO
+
+from six.moves.urllib.request import urlopen
+from pykml.parser import parse
+
+nsmap = OrderedDict([
+    (None, 'http://www.opengis.net/kml/2.2'),
+    ('atom', 'http://www.w3.org/2005/Atom'),
+    ('gx', 'http://www.google.com/kml/ext/2.2'),
+])
 
 # create a factory object for creating objects in the KML namespace
 KML_ElementMaker = objectify.ElementMaker(
@@ -64,7 +71,6 @@ def get_factory_object_name(namespace):
 
 def write_python_script_for_kml_document(doc):
     """Generates a python script that will construct a given KML document"""
-    from six import StringIO, BytesIO
     from pykml.helpers import separate_namespace
 
     output = StringIO()
@@ -96,7 +102,7 @@ def write_python_script_for_kml_document(doc):
         # TODO: remove the following redundant conditional
         if action in ('start', 'end', 'comment'):
             namespace, element_name = separate_namespace(elem.tag)
-            if action in ('comment'):
+            if action in ('comment', ):
                 indent = ' ' * level * indent_size
                 if elem.text:
                     text_list = elem.text.split('\n')
@@ -129,7 +135,7 @@ def write_python_script_for_kml_document(doc):
                         indent=indent,
                         comment=text,
                     ))
-            elif action in ('start'):
+            elif action in ('start', ):
                 main_element_processed_flag = True
                 if last_action is None:
                     indent = ''
@@ -161,7 +167,7 @@ def write_python_script_for_kml_document(doc):
                     tag=element_name,
                     text=text,
                 ))
-            elif action in ('end'):
+            elif action in ('end', ):
                 level -= 1
                 if last_action == 'start':
                     output.seek(output.tell() - 1, os.SEEK_SET)  # TODO: ?
@@ -202,9 +208,6 @@ def write_python_script_for_kml_document(doc):
 
 def kml2pykml():
     """Parse a KML file and generates a pyKML script"""
-    from six.moves.urllib.request import urlopen
-    from pykml.parser import parse
-    from optparse import OptionParser
 
     parser = OptionParser(
         usage="usage: %prog FILENAME_or_URL",

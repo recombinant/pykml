@@ -1,15 +1,18 @@
-import sys, os
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+#
+# -*- mode: python tab-width: 4 coding: utf-8 -*-
+import os
+from os import sys
 
-version = '0.1.1'
+from setuptools import setup
+
+sys.path.append(os.path.abspath('./src'))
+from pykml import version
+
 
 setup(
     name='pykml',
     version=version,
-    packages=['pykml',],
+    packages=['pykml', ],
     package_dir={'': 'src'},
     package_data={
         'pykml': [
@@ -21,12 +24,12 @@ setup(
         ],
     },
     install_requires=[
-        'lxml>=2.2.6',
+        'lxml>=2.2.6', 'six',
     ],
-    tests_require=['nose'],
+    tests_require=['xmlunittest', ],
     description="Python KML library",
     classifiers=[
-        # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        # Get strings from https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Programming Language :: Python',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
@@ -41,23 +44,23 @@ setup(
     keywords='kml',
     author='Tyler Erickson',
     author_email='tylerickson@gmail.com',
-    url='http://pypi.python.org/pypi/pykml',
+    url='https://pypi.python.org/pypi/pykml',
     license='BSD',
     long_description="""\
 =========
 pyKML
 =========
 pyKML is a Python package for parsing and authoring KML documents. It is based
-on the lxml.objectify API (http://codespeak.net/lxml/objectify.html) which
+on the lxml.objectify API (http://lxml.de/objectify.html) which
 provides Pythonic access to XML documents.
 
-.. figure:: http://pykml.googlecode.com/hg/docs/source/logo/pyKML_logo_200x200.png
+.. figure:: https://github.com/shabble/pykml/blob/master/docs/source/logo/pyKML_logo_200x200.png
    :scale: 100 %
    :alt: pyKML logo
 
 See the Package Documentation for information on installation and usage.
 """,
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'kml2pykml = pykml.factory:kml2pykml',
             'csv2kml = pykml.util:csv2kml',

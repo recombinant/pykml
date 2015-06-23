@@ -2,7 +2,7 @@
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
 """ pyKML Utility Module
 
-The pykml.utility module provides utility functions that operate on KML 
+The pykml.utility module provides utility functions that operate on KML
 documents
 """
 from __future__ import division
@@ -10,6 +10,14 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import re
+import sys
+from optparse import OptionParser
+import csv
+
+from lxml import etree
+
+from pykml.factory import KML_ElementMaker as KML
+from six.moves.urllib.request import urlopen
 
 
 def clean_xml_string(input_string):
@@ -19,10 +27,8 @@ def clean_xml_string(input_string):
 
 def format_xml_with_cdata(
         obj,
-        cdata_elements=['description', 'text', 'linkDescription', 'displayName']
+        cdata_elements=('description', 'text', 'linkDescription', 'displayName', )
 ):
-    from lxml import etree
-
     # Convert Objectify document to lxml.etree (is there a better way?)
     root = etree.fromstring(etree.tostring(etree.ElementTree(obj)))
 
@@ -67,8 +73,6 @@ def wrap_angle180(angle):
 
 def to_wkt_list(doc):
     """converts all geometries to Well Known Text format"""
-    from lxml import etree
-
     def ring_coords_to_wkt(ring):
         """converts LinearRing coordinates to WKT style coordinates"""
         return ((ring.coordinates.text.strip())
@@ -99,7 +103,7 @@ def to_wkt_list(doc):
 
                 wkt = 'POLYGON ({rings})'.format(rings=', '.join(ringlist))
                 ring_wkt_list.append(wkt)
-    return(ring_wkt_list)
+    return ring_wkt_list
 
 
 def convert_csv_to_kml(
@@ -112,9 +116,6 @@ def convert_csv_to_kml(
         snippet_field='snippet',
 ):
     """Reads a CSV document from a file-like object and converts it to KML"""
-
-    import csv
-    from pykml.factory import KML_ElementMaker as KML
 
     # create a basic KML document
     kmldoc = KML.kml(KML.Document(
@@ -235,15 +236,9 @@ def convert_csv_to_kml(
 
 def csv2kml():
     """Parse a CSV file and generates a KML document
-    
+
     Example: csv2kml test.csv
     """
-    import sys
-    from six.moves.urllib.request import urlopen
-    from optparse import OptionParser
-    from lxml import etree
-    from pykml.util import format_xml_with_cdata
-
     parser = OptionParser(
         usage="usage: %prog FILENAME_or_URL",
         version="%prog 0.1",

@@ -9,16 +9,19 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-import sys
 import os
+from os import sys
 import ssl
+from optparse import OptionParser
+
 from lxml import etree, objectify
+
 from six.moves.urllib.request import urlopen
 
 OGCKML_SCHEMA = 'http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd'
 
 
-class Schema():
+class Schema:
     """A class representing an XML Schema used to validate KML documents"""
 
     def __init__(self, schema):
@@ -36,14 +39,14 @@ class Schema():
 
     def validate(self, doc):
         """Validates a KML document
-        
-        This method eturns a boolean value indicating whether the KML document 
+
+        This method returns a boolean value indicating whether the KML document
         is valid when compared to the XML Schema."""
         return self.schema.validate(doc)
 
     def assertValid(self, doc):
-        """Asserts that a KML document is valide
-        
+        """Asserts that a KML document is valid
+
         The method generates a validation error if the document is not valid
         when compared to the XML Schema.
         """
@@ -66,8 +69,8 @@ def _parse_internal(source, parse_func, schema=None, parser_options=None):
 
 def fromstring(text, schema=None, parser_options=None):
     """Parses a KML text string
-    
-    This function parses a KML text string and optionally validates it against 
+
+    This function parses a KML text string and optionally validates it against
     a provided schema object"""
 
     return _parse_internal(text, objectify.fromstring, schema, parser_options)
@@ -75,8 +78,8 @@ def fromstring(text, schema=None, parser_options=None):
 
 def parse(fileobject, schema=None, parser_options=None):
     """Parses a file object
-    
-    This function parses a KML file object, and optionally validates it against 
+
+    This function parses a KML file object, and optionally validates it against
     a provided schema.
     """
     return _parse_internal(fileobject, objectify.parse, schema, parser_options)
@@ -84,12 +87,9 @@ def parse(fileobject, schema=None, parser_options=None):
 
 def validate_kml():
     """Validate a KML file
-    
+
     Example: validate_kml test.kml
     """
-    from pykml.parser import parse
-    from optparse import OptionParser
-
     parser = OptionParser(
         usage="usage: %prog FILENAME_or_URL",
         version="%prog 0.1",

@@ -5,14 +5,13 @@ import math
 from lxml import etree
 from pykml.parser import Schema
 from pykml.factory import KML_ElementMaker as kml
-from pykml.factory import ATOM_ElementMaker as atom
 from pykml.factory import GX_ElementMaker as gx
 
 GX_ns = "{http://www.google.com/kml/ext/2.2}"
 
 
 def drange(start, stop, step):
-    "create a decimal range list"
+    """create a decimal range list"""
     r = start
     while r < stop:
         yield r

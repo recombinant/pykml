@@ -3,8 +3,8 @@
 """Generate a KML string that matches the animated update example.
 
 References:
-http://code.google.com/apis/kml/documentation/kmlreference.html#gxanimatedupdate
-http://code.google.com/apis/kml/documentation/kmlfiles/animatedupdate_example.kml
+https://developers.google.com/kml/documentation/kmlreference#gxanimatedupdate
+https://developers.google.com/kml/documentation/kmlreference#gxaltitudemode
 
 Note that as of 12/1/2010, the KML code displayed beneath the animatedupdate_example.kml link
 is not valid.

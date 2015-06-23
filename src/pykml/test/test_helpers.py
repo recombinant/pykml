@@ -5,17 +5,16 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 import unittest
-from pykml.factory import KML_ElementMaker as K
-from pykml.factory import ATOM_ElementMaker as ATOM
-from pykml.factory import GX_ElementMaker as GX
+
 from pykml.parser import Schema
 from pykml.parser import fromstring
+from pykml.helpers import separate_namespace
+from pykml.helpers import set_max_decimal_places
 
 
 class KmlHelpersTestCase(unittest.TestCase):
     def test_separate_namespace(self):
         """Tests the function that separates namespaces from qualified names"""
-        from pykml.helpers import separate_namespace
 
         namespace, element_name = separate_namespace('{garden}eggplant')
         self.assertEqual(namespace, 'garden')
@@ -27,8 +26,6 @@ class KmlHelpersTestCase(unittest.TestCase):
 
     def test_set_max_decimal_places(self):
         """Tests setting the number of decimal places in a document"""
-
-        from pykml.helpers import set_max_decimal_places
 
         test_kml = (
             '<?xml version="1.0" encoding="UTF-8"?>'
@@ -129,29 +126,27 @@ class KmlHelpersTestCase(unittest.TestCase):
         )
         self.assertEqual(
             coords_list[1],
-            '-105.64009,40.25778,0.0 '
-            '-105.639708,40.25681,0.0 '
-            '-105.638919,40.25607,0.0 '
-            '-105.638534,40.2556,0.0'
+            '-105.640090,40.25778,0.00 '
+            '-105.639708,40.25681,0.00 '
+            '-105.638919,40.25607,0.00 '
+            '-105.638534,40.25560,0.00'
         )
         # import ipdb; ipdb.set_trace()
         self.assertEqual(
             coords_list[2],
-            '-105.641157,40.26643,0.0 '
-            '-105.642471,40.26601,0.0 '
-            '-105.642801,40.26549,0.0 '
-            '-105.642347,40.26465,0.0 '
-            '-105.641474,40.26452,0.0 '
-            '-105.640489,40.26476,0.0 '
-            '-105.640204,40.26539,0.0 '
-            '-105.640562,40.26618,0.0 '
-            '-105.641157,40.26643,0.0'
+            '-105.641157,40.26643,0.00 '
+            '-105.642471,40.26601,0.00 '
+            '-105.642801,40.26549,0.00 '
+            '-105.642347,40.26465,0.00 '
+            '-105.641474,40.26452,0.00 '
+            '-105.640489,40.26476,0.00 '
+            '-105.640204,40.26539,0.00 '
+            '-105.640562,40.26618,0.00 '
+            '-105.641157,40.26643,0.00'
         )
 
     def test_set_max_decimal_places_track(self):
         """Tests setting the number of decimal places for track data"""
-
-        from pykml.helpers import set_max_decimal_places
 
         test_kml = (
             '<?xml version="1.0" encoding="UTF-8"?>'
