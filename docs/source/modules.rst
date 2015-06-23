@@ -1,7 +1,7 @@
 pyKML Modules
 =============
 
-The pyKML library is separated into several modules, based on similar 
+The pyKML module is separated into several sub-modules, based on similar
 functionality.
 
 .. _pykml-factory:

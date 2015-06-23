@@ -3,12 +3,12 @@ The Sphinx_ package is used to create the pyKML documentation, including the
 `Documenting matplotlib`_ web page and the `matplotlib sampledoc tutorial`_.
 
 Dependencies
-=============
+============
 
 The pyKML documentation uses matplotlib and its Sphinx extensions. 
 On Ubuntu 10.04, you can install matplotlib as follows:: 
 
-    # the following doesn't work... matplotlib install generates error
+    # the following doesn't work… matplotlib install generates error
     apt-get install freetype6 freetype6-dev
     pip install numpy
     pip install matplotlib
