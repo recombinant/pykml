@@ -1,5 +1,9 @@
 #
 # -*- mode: python tab-width: 4 coding: utf-8 -*-
+#
+# To create wheel use:
+# python.exe setup.py install bdist_wheel --universal
+#
 import os
 from os import sys
 

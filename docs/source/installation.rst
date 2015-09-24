@@ -34,7 +34,7 @@ Installing the lxml Dependency
 
 pyKML depends on the lxml_ Python module, which in turn depends on two
 C libraries: libxml2_ and libxslt_.  Given this, the first step to installing
-pyKML is to get lxml running on your system.  Refer to the `lxml` website for
+pyKML is to get lxml running on your system.  Refer to the lxml_ website for
 `instructions on how to install lxml`_.
 
 To verify that the lxml module has been installed correctly,

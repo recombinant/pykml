@@ -26,6 +26,7 @@ class Schema:
     """A class representing an XML Schema used to validate KML documents"""
 
     def __init__(self, schema):
+        # TODO: use requests, open local file, open module dir file
         try:
             module_dir = os.path.split(__file__)[0]  # get the module path
             schema_file = os.path.join(module_dir, "schemas", schema)
@@ -42,14 +43,14 @@ class Schema:
         """Validates a KML document
 
         This method returns a boolean value indicating whether the KML document
-        is valid when compared to the XML Schema."""
+        `doc` is valid when compared to the XML Schema."""
         return self.schema.validate(doc)
 
     def assertValid(self, doc):
         """Asserts that a KML document is valid
 
-        The method generates a validation error if the document is not valid
-        when compared to the XML Schema.
+        The method raises a validation exception if the document `doc` is not
+        valid when compared to the XML Schema.
         """
         return self.schema.assertValid(doc)
 

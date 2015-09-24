@@ -11,6 +11,6 @@ version_info = namedtuple('version_info',
                           'minor '
                           'macro '
                           'releaselevel '
-                          'serial')(0, 2, 0, 'alpha', 0)
+                          'serial')(0, 2, 1, 'alpha', 0)
 
 version = '{}.{}.{}'.format(*version_info[:3])

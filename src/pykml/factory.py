@@ -145,9 +145,9 @@ def write_python_script_for_kml_document(doc):
                 level += 1
                 if elem.text:
                     # METHOD 1
-                    #                    # treat all text string the same. this works but gets
-                    #                    # messy for multi-line test strings
-                    #                    text = repr(elem.text)
+                    # # treat all text string the same. this works but gets
+                    # # messy for multi-line test strings
+                    # text = repr(elem.text)
                     # METHOD 2 - format multiline strings differently
                     text_list = elem.text.split('\n')
                     if len(text_list) == 1:
@@ -198,9 +198,9 @@ def write_python_script_for_kml_document(doc):
 
     # add python code to print out the KML document
     output.write('print(etree.tostring(etree.ElementTree(doc), \n'
-                 '      encoding=\'utf-8\', \n'
-                 '      xml_declaration=True, \n'
-                 '      pretty_print=True).decode(\'utf-8\'))\n')
+                 '                     encoding=\'utf-8\', \n'
+                 '                     xml_declaration=True, \n'
+                 '                     pretty_print=True).decode(\'utf-8\'))\n')
 
     contents = output.getvalue()
     output.close()

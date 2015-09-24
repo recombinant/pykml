@@ -34,7 +34,7 @@ Developers can download the `pyKML source code`_ and noodle with it.
 .. _Bug reports, enhancement requests: https://developers.google.com/kml
 
 Contents
-==================
+========
 
 .. toctree::
     :maxdepth: 2
