@@ -285,9 +285,9 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
             '  ),\n'
             ')\n'
             'print(etree.tostring(etree.ElementTree(doc), \n'
-            '      encoding=\'utf-8\', \n'
-            '      xml_declaration=True, \n'
-            '      pretty_print=True).decode(\'utf-8\'))\n'
+            '                     encoding=\'utf-8\', \n'
+            '                     xml_declaration=True, \n'
+            '                     pretty_print=True).decode(\'utf-8\'))\n'
         )
 
     def test_write_python_script_for_multiline_coordinate_string(self):
@@ -335,9 +335,9 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
                 '  ),\n'
                 ')\n'
                 'print(etree.tostring(etree.ElementTree(doc), \n'
-                '      encoding=\'utf-8\', \n'
-                '      xml_declaration=True, \n'
-                '      pretty_print=True).decode(\'utf-8\'))\n'
+                '                     encoding=\'utf-8\', \n'
+                '                     xml_declaration=True, \n'
+                '                     pretty_print=True).decode(\'utf-8\'))\n'
             ).format('' if six.PY3 else 'u')
         )
 
@@ -378,9 +378,9 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
                 '  ),\n'
                 ')\n'
                 'print(etree.tostring(etree.ElementTree(doc), \n'
-                '      encoding=\'utf-8\', \n'
-                '      xml_declaration=True, \n'
-                '      pretty_print=True).decode(\'utf-8\'))\n'
+                '                     encoding=\'utf-8\', \n'
+                '                     xml_declaration=True, \n'
+                '                     pretty_print=True).decode(\'utf-8\'))\n'
             ).format('' if six.PY3 else 'u')
         )
         # create a temporary python file
