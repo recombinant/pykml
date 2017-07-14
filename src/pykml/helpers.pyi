@@ -4,7 +4,7 @@
 # Stub file for pyxml.helpers
 #
 from decimal import Decimal
-from typing import Optional, Tuple, Dict, Any
+from typing import Optional, Tuple, Dict
 
 from lxml import etree
 
@@ -22,8 +22,7 @@ def _replace_delimited_string_member(delimited_str: str,
     ...
 
 
-# TODO: max_decimals
 def set_max_decimal_places(doc: etree.XMLParser,
-                           max_decimals: Dict[Any, int]) \
+                           max_decimals: Dict[str, int]) \
         -> None:
     ...

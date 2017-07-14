@@ -1,25 +1,23 @@
 #
-# -*- mode: python tab-width: 4 coding: utf-8 -*-
-""" pyKML Utility Module
-
-The pykml.utility module provides utility functions that operate on KML
+# coding: utf-8
+#
+# pykml.util
+#
+"""
+The pykml.util module provides utility functions that operate on KML
 documents
 """
-from __future__ import division
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-import re
-from contextlib import contextmanager
-import ssl
-from optparse import OptionParser
 import csv
+import re
+import ssl
+from contextlib import contextmanager
+from optparse import OptionParser
+from urllib.request import urlopen
 
 from lxml import etree
 
-from pykml.factory import KML_ElementMaker as KML
-from pykml import version as pykml_version
-from six.moves.urllib.request import urlopen
+from . import version as pykml_version
+from .factory import KML_ElementMaker as KML
 
 
 def clean_xml_string(input_string):
@@ -32,7 +30,7 @@ def format_xml_with_cdata(
         cdata_elements=('description',
                         'text',
                         'linkDescription',
-                        'displayName', )):
+                        'displayName',)):
     # Convert Objectify document to lxml.etree (is there a better way?)
     root = etree.fromstring(etree.tostring(etree.ElementTree(obj)))
 
@@ -70,13 +68,14 @@ def wrap_angle180(angle):
     # returns an angle such that -180 < angle <= 180
     try:
         # if angle is a sequence
-        return [((a+180) % 360) - 180 for a in angle]
+        return [((a + 180) % 360) - 180 for a in angle]
     except TypeError:
-        return ((angle+180) % 360) - 180
+        return ((angle + 180) % 360) - 180
 
 
 def to_wkt_list(doc):
     """converts all geometries to Well Known Text format"""
+
     def ring_coords_to_wkt(ring):
         """converts LinearRing coordinates to WKT style coordinates"""
         return ((ring.coordinates.text.strip())
@@ -85,27 +84,24 @@ def to_wkt_list(doc):
                 .replace('@@', ', '))
 
     ring_wkt_list = []
-    context = etree.iterwalk(doc, events=("start",))
+    context = etree.iterwalk(doc, events=('start',))
     for action, elem in context:
         if elem.tag in ['{http://www.opengis.net/kml/2.2}Polygon',
                         '{http://www.opengis.net/kml/2.2}MultiPolygon']:
-            # print("%s: %s" % (action, elem.tag))
+            # print(f'{action}: {elem.tag}')
             if elem.tag == '{http://www.opengis.net/kml/2.2}Polygon':
 
                 # outer boundary
+                outer_text = ring_coords_to_wkt(elem.outerBoundaryIs.LinearRing)
                 ringlist = [
-                    '({0})'.format(
-                        ring_coords_to_wkt(elem.outerBoundaryIs.LinearRing)
-                    )
+                    f'({outer_text})'
                 ]
                 for obj in elem.findall('{http://www.opengis.net/kml/2.2}innerBoundaryIs'):
-                    ringlist.append(
-                        '({0})'.format(
-                            ring_coords_to_wkt(obj.LinearRing)
-                        )
-                    )
+                    inner_text = ring_coords_to_wkt(obj.LinearRing)
+                    ringlist.append(f'({inner_text})')
 
-                wkt = 'POLYGON ({rings})'.format(rings=', '.join(ringlist))
+                rings = ', '.join(ringlist)
+                wkt = f'POLYGON ({rings})'
                 ring_wkt_list.append(wkt)
     return ring_wkt_list
 
@@ -143,8 +139,8 @@ def convert_csv_to_kml(
     # create a basic KML document
     kmldoc = KML.kml(KML.Document(
         KML.Folder(
-            KML.name("KmlFile"))
-        )
+            KML.name('KmlFile'))
+    )
     )
 
     csvdoc = csv.DictReader(fileobject)
@@ -214,13 +210,13 @@ def convert_csv_to_kml(
     # check that latitude and longitude columns can be found
     if latitude_field not in csvdoc.fieldnames:
         raise KeyError(
-            'Latitude field ({0}) was not found in the CSV file '
-            'column names {1}'.format(latitude_field, csvdoc.fieldnames)
+            f'Latitude field ({latitude_field}) was not found '
+            f'in the CSV file column names {csvdoc.fieldnames}'
         )
     if longitude_field not in csvdoc.fieldnames:
         raise KeyError(
-            'Longitude field ({0}) was not found in the CSV file '
-            'column names {1}'.format(longitude_field, csvdoc.fieldnames)
+            f'Longitude field ({longitude_field}) was not found '
+            f'in the CSV file column names {csvdoc.fieldnames}'
         )
     for row in csvdoc:
         pm = KML.Placemark()
@@ -238,10 +234,9 @@ def convert_csv_to_kml(
             )
         else:
             desc = '<table border="1"'
-            fmt = '<tr><th>{0}</th><td>{1}</td></tr>'
             # iterate through the cells in 'row' filling table
             for field_name in csvdoc.fieldnames:
-                desc += fmt.format(field_name, row[field_name])
+                desc += f'<tr><th>{field_name}</th><td>{row[field_name]}</td></tr>'
             desc += '</table>'
             pm.append(KML.description(clean_xml_string(desc)))
 
@@ -264,23 +259,23 @@ def csv2kml():
     """
     parser = OptionParser(
         usage='usage: %prog FILENAME_or_URL',
-        version='%prog {}'.format(pykml_version),
+        version=f'%prog {pykml_version}',
     )
-    parser.add_option("--longitude_field", dest="longitude_field",
-                      help="name of the column that contains longitude data")
-    parser.add_option("--latitude_field", dest="latitude_field",
-                      help="name of the column that contains latitude data")
-    parser.add_option("--altitude_field", dest="altitude_field",
-                      help="name of the column that contains altitude data")
-    parser.add_option("--name_field", dest="name_field",
-                      help="name of the column used for the placemark name")
-    parser.add_option("--description_field", dest="description_field",
-                      help="name of the column used for the placemark description")
-    parser.add_option("--snippet_field", dest="snippet_field",
-                      help="name of the column used for the placemark snippet text")
+    parser.add_option('--longitude_field', dest='longitude_field',
+                      help='name of the column that contains longitude data')
+    parser.add_option('--latitude_field', dest='latitude_field',
+                      help='name of the column that contains latitude data')
+    parser.add_option('--altitude_field', dest='altitude_field',
+                      help='name of the column that contains altitude data')
+    parser.add_option('--name_field', dest='name_field',
+                      help='name of the column used for the placemark name')
+    parser.add_option('--description_field', dest='description_field',
+                      help='name of the column used for the placemark description')
+    parser.add_option('--snippet_field', dest='snippet_field',
+                      help='name of the column used for the placemark snippet text')
     (options, args) = parser.parse_args()
     if len(args) != 1:
-        parser.error("wrong number of arguments")
+        parser.error('wrong number of arguments')
     else:
         uri = args[0]
 

@@ -18,7 +18,7 @@ from pykml.parser import parse
 class ValidatorTestCase(unittest.TestCase):
     def test_initialize_schema(self):
         """Tests the creation Schema instance"""
-        schema = Schema("ogckml22.xsd")
+        schema = Schema('ogckml22.xsd')
         self.assertTrue(isinstance(schema.schema, etree.XMLSchema))
 
     def test_initialize_schema_remote_url(self):
@@ -31,8 +31,8 @@ class ParseKmlOgcTestCase(unittest.TestCase):
 
     def test_fromstring_kml_document(self):
         """Tests the parsing of an valid KML string"""
-        test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'.encode('ascii')
-        tree = fromstring(test_kml, schema=Schema("ogckml22.xsd"))
+        test_kml = b'<kml xmlns="http://www.opengis.net/kml/2.2"/>'
+        tree = fromstring(test_kml, schema=Schema('ogckml22.xsd'))
         self.assertEqual(etree.tostring(tree, encoding='ascii'), test_kml)
         tree = fromstring(test_kml)
         self.assertEqual(etree.tostring(tree, encoding='ascii'), test_kml)
@@ -42,13 +42,13 @@ class ParseKmlOgcTestCase(unittest.TestCase):
         test_kml = b'<bad_element />'
         with self.assertRaises(etree.XMLSyntaxError):
             # tree =
-            fromstring(test_kml, schema=Schema("ogckml22.xsd"))
+            fromstring(test_kml, schema=Schema('ogckml22.xsd'))
 
     def test_parse_kml_document(self):
         """Tests the parsing of an valid KML file object"""
-        test_kml = '<kml xmlns="http://www.opengis.net/kml/2.2"/>'.encode('ascii')
+        test_kml = b'<kml xmlns="http://www.opengis.net/kml/2.2"/>'
         fileobject = BytesIO(test_kml)
-        schema = Schema("ogckml22.xsd")
+        schema = Schema('ogckml22.xsd')
         tree = parse(fileobject, schema=schema)
         self.assertEqual(etree.tostring(tree), test_kml)
         tree = parse(fileobject, schema=schema)
@@ -56,10 +56,10 @@ class ParseKmlOgcTestCase(unittest.TestCase):
 
     def test_parse_invalid_kml_document(self):
         """Tests the parsing of an invalid KML document"""
-        fileobject = BytesIO('<bad_element />'.encode('ascii'))
+        fileobject = BytesIO(b'<bad_element />')
         with self.assertRaises(etree.XMLSyntaxError):
             # tree =
-            parse(fileobject, schema=Schema("ogckml22.xsd"))
+            parse(fileobject, schema=Schema('ogckml22.xsd'))
 
     def test_parse_kml_url(self):
         """Tests the parsing of a KML URL"""
@@ -70,7 +70,7 @@ class ParseKmlOgcTestCase(unittest.TestCase):
         context = ssl._create_unverified_context()
         try:
             with urlopen(url, context=context) as fileobject:
-                tree = parse(fileobject, schema=Schema("ogckml22.xsd"))
+                tree = parse(fileobject, schema=Schema('ogckml22.xsd'))
 
             tree_string = etree.tostring(tree, encoding='ascii')[:78]
             expected_string = \
@@ -130,7 +130,7 @@ class ParseKmlOgcTestCase(unittest.TestCase):
             with urlopen(url, context=context) as fileobject:
                 with self.assertRaises(etree.XMLSyntaxError):
                     # tree =
-                    parse(fileobject, schema=Schema("ogckml22.xsd"))
+                    parse(fileobject, schema=Schema('ogckml22.xsd'))
 
         except URLError:
             print('Unable to access the URL. Skipping test...')

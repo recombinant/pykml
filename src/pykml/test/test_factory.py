@@ -148,7 +148,7 @@ class KmlFactoryTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
         doc = KML.kml(
             KML.Document(
                 ATOM.author(
-                    ATOM.name("J. K. Rowling")
+                    ATOM.name('J. K. Rowling')
                 ),
                 ATOM.link(href='http://www.harrypotter.com'),
                 KML.Placemark(

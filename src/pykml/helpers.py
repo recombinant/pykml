@@ -1,19 +1,16 @@
 #
-# -*- mode: python tab-width: 4 coding: utf-8 -*-
-"""pyKML Helpers Module
-
+# coding: utf-8
+#
+# pykml.helpers
+#
+"""
 The pykml.helpers module contains 'helper' functions that operate on pyKML 
 document objects for accomplishing common tasks.
-
 """
-from __future__ import division
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
 import re
 from decimal import Decimal
 
-from pykml.factory import KML_ElementMaker as KML
+from .factory import KML_ElementMaker as KML
 
 
 def separate_namespace(qname):

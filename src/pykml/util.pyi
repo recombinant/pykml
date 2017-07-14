@@ -8,7 +8,7 @@ from typing import Sequence, List, Any, Optional, Dict, TypeVar, Iterable
 
 from lxml import etree
 
-from pykml.factory import KML_ElementMaker as KML
+from .factory import KML_ElementMaker as KML
 
 
 def clean_xml_string(input_string: str) -> str:

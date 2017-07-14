@@ -85,7 +85,7 @@ class KmlHelpersTestCase(unittest.TestCase):
             '</kml>'
         test_kml = test_kml.encode('utf-8')
 
-        doc = fromstring(test_kml, schema=Schema("ogckml22.xsd"))
+        doc = fromstring(test_kml, schema=Schema('ogckml22.xsd'))
         set_max_decimal_places(
             doc,
             max_decimals={
@@ -98,26 +98,26 @@ class KmlHelpersTestCase(unittest.TestCase):
             }
         )
 
-        longitude_list = doc.findall(".//{http://www.opengis.net/kml/2.2}longitude")
+        longitude_list = doc.findall('.//{http://www.opengis.net/kml/2.2}longitude')
         self.assertAlmostEqual(longitude_list[0], -105.638133)
 
-        latitude_list = doc.findall(".//{http://www.opengis.net/kml/2.2}latitude")
+        latitude_list = doc.findall('.//{http://www.opengis.net/kml/2.2}latitude')
         self.assertAlmostEqual(latitude_list[0], 40.25542)
 
-        altitude_list = doc.findall(".//{http://www.opengis.net/kml/2.2}altitude")
+        altitude_list = doc.findall('.//{http://www.opengis.net/kml/2.2}altitude')
         self.assertAlmostEqual(altitude_list[0], 0.12)
 
-        heading_list = doc.findall(".//{http://www.opengis.net/kml/2.2}heading")
+        heading_list = doc.findall('.//{http://www.opengis.net/kml/2.2}heading')
         self.assertAlmostEqual(heading_list[0], -75.3)
 
-        tilt_list = doc.findall(".//{http://www.opengis.net/kml/2.2}tilt")
+        tilt_list = doc.findall('.//{http://www.opengis.net/kml/2.2}tilt')
         self.assertAlmostEqual(tilt_list[0], 23.0)
 
         # Note that the range value was not changed
         range_list = doc.findall(".//{http://www.opengis.net/kml/2.2}range")
         self.assertAlmostEqual(range_list[0], 234.1234567890)
 
-        coords_list = doc.findall(".//{http://www.opengis.net/kml/2.2}coordinates")
+        coords_list = doc.findall('.//{http://www.opengis.net/kml/2.2}coordinates')
         self.assertEqual(
             coords_list[0],
             "-105.638133,40.25542,3826.12"
@@ -165,7 +165,7 @@ class KmlHelpersTestCase(unittest.TestCase):
             '</kml>'
         test_kml = test_kml.encode('utf-8')
 
-        doc = fromstring(test_kml, schema=Schema("kml22gx.xsd"))
+        doc = fromstring(test_kml, schema=Schema('kml22gx.xsd'))
         set_max_decimal_places(
             doc,
             max_decimals={
@@ -175,7 +175,7 @@ class KmlHelpersTestCase(unittest.TestCase):
             }
         )
 
-        coords_list = doc.findall(".//{http://www.google.com/kml/ext/2.2}coord")
+        coords_list = doc.findall('.//{http://www.google.com/kml/ext/2.2}coord')
         # import ipdb; ipdb.set_trace()
         self.assertEqual(
             coords_list[0],

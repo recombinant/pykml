@@ -1,23 +1,21 @@
 #
-# -*- mode: python tab-width: 4 coding: utf-8 -*-
-"""pyKML Parser Module
-
+# coding: utf-8
+#
+# pykml.parser
+#
+"""
 The pykml.parser module provides functions that can be used to parse KML 
 from a file or remote URL.
 """
-from __future__ import division
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-import os
 import ssl
-from optparse import OptionParser
 from contextlib import closing
+from optparse import OptionParser
+from pathlib import Path
+from urllib.request import urlopen
 
 from lxml import etree, objectify
 
-from six.moves.urllib.request import urlopen
-from pykml import version as pykml_version
+from . import version as pykml_version
 
 OGCKML_SCHEMA = 'http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd'
 
@@ -28,10 +26,9 @@ class Schema:
     def __init__(self, schema):
         # TODO: use requests, open local file, open module dir file
         try:
-            module_dir = os.path.split(__file__)[0]  # get the module path
-            schema_file = os.path.join(module_dir, "schemas", schema)
+            schema_file = Path(__file__).parent / 'schemas' / schema
             # try to open a local file
-            with open(schema_file, 'rb') as f:
+            with schema_file.open('rb') as f:
                 self.schema = etree.XMLSchema(file=f)
         except:
             # try to open a remote URL
@@ -92,27 +89,27 @@ def validate_kml():
 
     Example: validate_kml test.kml
     """
-    from pykml.util import open_pykml_uri
+    from .util import open_pykml_uri
 
     parser = OptionParser(
         usage='usage: %prog FILENAME_or_URL',
-        version='%prog {}'.format(pykml_version),
+        version=f'%prog {pykml_version}',
     )
-    parser.add_option("--schema", dest="schema_uri",
-                      help="URI of the XML Schema Document used for validation")
+    parser.add_option('--schema', dest='schema_uri',
+                      help='URI of the XML Schema Document used for validation')
     (options, args) = parser.parse_args()
     if len(args) != 1:
-        parser.error("wrong number of arguments")
+        parser.error('wrong number of arguments')
     else:
         uri = args[0]
 
     with open_pykml_uri(uri, mode='rb') as f:
         try:
-            print('Parsing "{}"'.format(uri))
+            print(f'Parsing "{uri}"')
             doc = parse(f, schema=None)
 
         except etree.XMLSyntaxError as e:
-            print('Invalid XML: {}'.format(e.msg))
+            print(f'Invalid XML: {e.msg}')
             exit(1)
 
     # load the schema
@@ -120,7 +117,7 @@ def validate_kml():
         schema = Schema(options.schema_uri)
     else:
         # by default, use the OGC base schema
-        print('Validating against the default schema: {0}'.format(OGCKML_SCHEMA))
+        print(f'Validating against the default schema: {OGCKML_SCHEMA}')
         schema = Schema(OGCKML_SCHEMA)
 
     print('Validating document...')

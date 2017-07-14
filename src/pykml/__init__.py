@@ -1,10 +1,8 @@
 #
-# -*- mode: python tab-width: 4 coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
+# coding: utf-8
+#
+# pykml.__init__
+#
 from collections import namedtuple
 
 version_info = namedtuple('VersionInfo',
