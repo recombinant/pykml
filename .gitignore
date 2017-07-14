@@ -3,3 +3,5 @@ build
 dist
 pykml.egg-info
 .idea
+.cache
+.mypy_cache
