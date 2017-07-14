@@ -1,15 +1,12 @@
 #
-# -*- mode: python tab-width: 4 coding: utf-8 -*-
-from __future__ import division
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
+# coding: utf-8
+#
 import unittest
 
-from pykml.parser import Schema
-from pykml.parser import fromstring
 from pykml.helpers import separate_namespace
 from pykml.helpers import set_max_decimal_places
+from pykml.parser import Schema
+from pykml.parser import fromstring
 
 
 class KmlHelpersTestCase(unittest.TestCase):
@@ -27,66 +24,67 @@ class KmlHelpersTestCase(unittest.TestCase):
     def test_set_max_decimal_places(self):
         """Tests setting the number of decimal places in a document"""
 
-        test_kml = (
-            '<?xml version="1.0" encoding="UTF-8"?>'
-            '<kml xmlns="http://www.opengis.net/kml/2.2" '
-                 'xmlns:gx="http://www.google.com/kml/ext/2.2" '
-                 'xmlns:kml="http://www.opengis.net/kml/2.2" '
-                 'xmlns:atom="http://www.w3.org/2005/Atom">'
-              '<Document>'
-                '<Placemark>'
-                  '<name>Spearhead</name>'
-                  '<LookAt>'
-                    '<longitude>-105.6381333137406</longitude>'
-                    '<latitude>40.25542364754504</latitude>'
-                    '<altitude>0.123456789</altitude>'
-                    '<heading>-75.2679217880259</heading>'
-                    '<tilt>23.33768008163944</tilt>'
-                    '<range>234.1234567890</range>'
-                    '<altitudeMode>relativeToGround</altitudeMode>'
-                  '</LookAt>'
-                  '<Point>'
-                    '<altitudeMode>absolute</altitudeMode>'
-                    '<coordinates>'
-                      '-105.6381333137406,40.25542364754504,3826.1234567890'
-                    '</coordinates>'
-                  '</Point>'
-                '</Placemark>'
-                '<Placemark>'
-                  '<name>North Ridge</name>'
-                  '<LineString>'
-                    '<tessellate>1</tessellate>'
-                    '<coordinates>'
-                      '-105.6400899274733,40.25778038346723,0 '
-                      '-105.6397083557171,40.25680995109639,0 '
-                      '-105.6389193178716,40.25606911151127,0 '
-                      '-105.6385344464865,40.25559941617504,0'
-                    '</coordinates>'
-                  '</LineString>'
-                '</Placemark>'
-                '<Placemark>'
-                  '<name>Black Lake</name>'
-                  '<Polygon>'
-                    '<tessellate>1</tessellate>'
-                    '<outerBoundaryIs>'
-                      '<LinearRing>'
-                        '<coordinates>'
-                          '-105.6411566922825,40.26642751482452,0 '
-                          '-105.6424707115566,40.26600581412304,0 '
-                          '-105.6428010853679,40.26549238687588,0 '
-                          '-105.6423465680717,40.26464873270425,0 '
-                          '-105.6414735029203,40.2645201246226,0 '
-                          '-105.6404885591011,40.2647647504581,0 '
-                          '-105.6402035173736,40.26539046743765,0 '
-                          '-105.6405618656529,40.26617884849238,0 '
-                          '-105.6411566922825,40.26642751482452,0</coordinates>'
-                      '</LinearRing>'
-                    '</outerBoundaryIs>'
-                  '</Polygon>'
-                '</Placemark>'
-              '</Document>'
+        test_kml = \
+            '<?xml version="1.0" encoding="UTF-8"?>' \
+            '<kml xmlns="http://www.opengis.net/kml/2.2" ' \
+            'xmlns:gx="http://www.google.com/kml/ext/2.2" ' \
+            'xmlns:kml="http://www.opengis.net/kml/2.2" ' \
+            'xmlns:atom="http://www.w3.org/2005/Atom">' \
+            '<Document>' \
+            '<Placemark>' \
+            '<name>Spearhead</name>' \
+            '<LookAt>' \
+            '<longitude>-105.6381333137406</longitude>' \
+            '<latitude>40.25542364754504</latitude>' \
+            '<altitude>0.123456789</altitude>' \
+            '<heading>-75.2679217880259</heading>' \
+            '<tilt>23.33768008163944</tilt>' \
+            '<range>234.1234567890</range>' \
+            '<altitudeMode>relativeToGround</altitudeMode>' \
+            '</LookAt>' \
+            '<Point>' \
+            '<altitudeMode>absolute</altitudeMode>' \
+            '<coordinates>' \
+            '-105.6381333137406,40.25542364754504,3826.1234567890' \
+            '</coordinates>' \
+            '</Point>' \
+            '</Placemark>' \
+            '<Placemark>' \
+            '<name>North Ridge</name>' \
+            '<LineString>' \
+            '<tessellate>1</tessellate>' \
+            '<coordinates>' \
+            '-105.6400899274733,40.25778038346723,0 ' \
+            '-105.6397083557171,40.25680995109639,0 ' \
+            '-105.6389193178716,40.25606911151127,0 ' \
+            '-105.6385344464865,40.25559941617504,0' \
+            '</coordinates>' \
+            '</LineString>' \
+            '</Placemark>' \
+            '<Placemark>' \
+            '<name>Black Lake</name>' \
+            '<Polygon>' \
+            '<tessellate>1</tessellate>' \
+            '<outerBoundaryIs>' \
+            '<LinearRing>' \
+            '<coordinates>' \
+            '-105.6411566922825,40.26642751482452,0 ' \
+            '-105.6424707115566,40.26600581412304,0 ' \
+            '-105.6428010853679,40.26549238687588,0 ' \
+            '-105.6423465680717,40.26464873270425,0 ' \
+            '-105.6414735029203,40.2645201246226,0 ' \
+            '-105.6404885591011,40.2647647504581,0 ' \
+            '-105.6402035173736,40.26539046743765,0 ' \
+            '-105.6405618656529,40.26617884849238,0 ' \
+            '-105.6411566922825,40.26642751482452,0</coordinates>' \
+            '</LinearRing>' \
+            '</outerBoundaryIs>' \
+            '</Polygon>' \
+            '</Placemark>' \
+            '</Document>' \
             '</kml>'
-        ).encode('utf-8')
+        test_kml = test_kml.encode('utf-8')
+
         doc = fromstring(test_kml, schema=Schema("ogckml22.xsd"))
         set_max_decimal_places(
             doc,
@@ -148,24 +146,25 @@ class KmlHelpersTestCase(unittest.TestCase):
     def test_set_max_decimal_places_track(self):
         """Tests setting the number of decimal places for track data"""
 
-        test_kml = (
-            '<?xml version="1.0" encoding="UTF-8"?>'
-            '<kml xmlns="http://www.opengis.net/kml/2.2" '
-                 'xmlns:gx="http://www.google.com/kml/ext/2.2">'
-              '<Folder>'
-                '<Placemark>'
-                  '<gx:Track>'
-                    '<when>2010-05-28T02:02:09Z</when>'
-                    '<when>2010-05-28T02:02:35Z</when>'
-                    '<when>2010-05-28T02:02:44Z</when>'
-                    '<gx:coord>-122.111111 37.111111 151.333333</gx:coord>'
-                    '<gx:coord>-122.222222 37.222222 152.222222</gx:coord>'
-                    '<gx:coord>-122.333333 37.333333 153.333333</gx:coord>'
-                  '</gx:Track>'
-                '</Placemark>'
-              '</Folder>'
+        test_kml = \
+            '<?xml version="1.0" encoding="UTF-8"?>' \
+            '<kml xmlns="http://www.opengis.net/kml/2.2" ' \
+            'xmlns:gx="http://www.google.com/kml/ext/2.2">' \
+            '<Folder>' \
+            '<Placemark>' \
+            '<gx:Track>' \
+            '<when>2010-05-28T02:02:09Z</when>' \
+            '<when>2010-05-28T02:02:35Z</when>' \
+            '<when>2010-05-28T02:02:44Z</when>' \
+            '<gx:coord>-122.111111 37.111111 151.333333</gx:coord>' \
+            '<gx:coord>-122.222222 37.222222 152.222222</gx:coord>' \
+            '<gx:coord>-122.333333 37.333333 153.333333</gx:coord>' \
+            '</gx:Track>' \
+            '</Placemark>' \
+            '</Folder>' \
             '</kml>'
-        ).encode('utf-8')
+        test_kml = test_kml.encode('utf-8')
+
         doc = fromstring(test_kml, schema=Schema("kml22gx.xsd"))
         set_max_decimal_places(
             doc,
@@ -182,3 +181,7 @@ class KmlHelpersTestCase(unittest.TestCase):
             coords_list[0],
             '-122.111 37.11 151.3'
         )
+
+
+if __name__ == '__main__':
+    unittest.main()

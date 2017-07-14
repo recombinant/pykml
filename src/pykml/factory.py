@@ -77,11 +77,6 @@ def write_python_script_for_kml_document(doc):
     output = StringIO()
     indent_size = 2
 
-    # use unicode literals and print function as these are compatible
-    # with PY2 & PY3
-    output.write('from __future__ import unicode_literals\n')
-    output.write('from __future__ import print_function\n')
-
     # add the etree package so that comments can be handled
     output.write('from lxml import etree\n')
 
@@ -178,7 +173,7 @@ def write_python_script_for_kml_document(doc):
                 # NOTE: iteration order is implementation dependent
                 # etree does not guarantee to preserve attribute list order
                 for att, val in elem.items():
-                    output.write('{0}  {1}="{2}",\n'.format(indent, att, val))
+                    output.write('{0}{1}=\'{2}\',\n'.format(indent, att, val))
                 output.write('{0}),\n'.format(indent))
         last_action = action
 
