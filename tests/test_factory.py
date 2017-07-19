@@ -1,6 +1,8 @@
 #
 # coding: utf-8
 #
+# test_factory
+#
 import os
 import subprocess
 import tempfile
@@ -10,7 +12,7 @@ from pathlib import Path
 import xmlunittest
 from lxml import etree
 
-import pykml
+import pykml.parser
 from pykml.factory import ATOM_ElementMaker as ATOM
 from pykml.factory import GX_ElementMaker as GX
 from pykml.factory import KML_ElementMaker as KML
@@ -376,10 +378,11 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
             temp_python_file = f.name
             f.write(script)
 
-        # execute the temporary python file to create a KML file
-
+        # Execute the temporary python file to create a KML file.
+        # PYTHONPATH may need to be set so that the pykml module is found.
         current_env = os.environ.copy()
-        current_env['PYTHONPATH'] = os.fspath(Path(__file__).parent.parent.parent)
+        # May be required if not using an IDE.
+        # current_env['PYTHONPATH'] = os.fspath(Path(__file__).parent)
 
         with tempfile.NamedTemporaryFile(mode='wb', suffix='.kml', delete=False) as f:
             temp_kml_file = f.name
@@ -410,12 +413,11 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
             temp_python_file = f.name
             f.write(script)
 
-        # execute the temporary python file to create a KML file
-        # set the PYTHONPATH variable so that it references the root
-        # of the pyKML library
-
+        # Execute the temporary python file to create a KML file.
+        # PYTHONPATH may need to be set so that the pykml module is found.
         current_env = os.environ.copy()
-        current_env['PYTHONPATH'] = os.fspath(Path(__file__).parent.parent.parent)
+        # May be required if not using an IDE.
+        # current_env['PYTHONPATH'] = os.fspath(Path(__file__).parent)
 
         with tempfile.NamedTemporaryFile(mode='wb', suffix='.kml', delete=False) as f:
             temp_kml_file = f.name
@@ -445,10 +447,11 @@ class GeneratePythonScriptTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
             temp_python_file = f.name
             f.write(script)
 
-        # execute the temporary python file to create a KML file
-
+        # Execute the temporary python file to create a KML file.
+        # PYTHONPATH may need to be set so that the pykml module is found.
         current_env = os.environ.copy()
-        current_env['PYTHONPATH'] = os.fspath(Path(__file__).parent.parent.parent)
+        # May be required if not using an IDE.
+        # current_env['PYTHONPATH'] = os.fspath(Path(__file__).parent)
 
         with tempfile.NamedTemporaryFile(mode='wb', suffix='.kml', delete=False) as f:
             temp_kml_file = f.name

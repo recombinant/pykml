@@ -1,7 +1,10 @@
 #
 # coding: utf-8
 #
+# test_util
+#
 import os
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -260,7 +263,6 @@ class KmlUtilTestCase(unittest.TestCase, xmlunittest.XmlTestMixin):
 
     def test_convert_csv_to_kml_missing_coordinate_fields(self):
         """Tests the convert_csv_to_kml function"""
-        import tempfile
         from pykml.util import convert_csv_to_kml
 
         # create a CSV file for testing

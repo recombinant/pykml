@@ -1,5 +1,5 @@
 #
-# -*- mode: python tab-width: 4 coding: utf-8 -*-
+# coding: utf-8
 #
 # To create wheel use:
 # python.exe setup.py install bdist_wheel --universal
@@ -21,16 +21,14 @@ setup(
     package_data={
         'pykml': [
             'schemas/*.xsd',
-            'test/*.py',
-            'test/testfiles/*.kml',
-            'test/testfiles/google_kml_developers_guide/*.kml',
-            'test/testfiles/google_kml_tutorial/*.kml',
         ],
     },
     install_requires=[
-        'lxml>=2.2.6', 'six',
+        'lxml>=3.8.0', 'requests>2.18.0', 'pytest-runner',
     ],
-    tests_require=['xmlunittest', ],
+    tests_require=[
+        'pytest', 'xmlunittest',
+    ],
     description="Python KML library",
     classifiers=[
         # Get strings from https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -38,6 +36,9 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Development Status :: 2 - Pre-Alpha',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: Implementation :: CPython',
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
         'Topic :: Multimedia :: Graphics :: Viewers',
