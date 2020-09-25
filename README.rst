@@ -1,3 +1,5 @@
+2020 09 25 `simplekml <https://pypi.org/project/simplekml/>`_ is simpler to use and `well documented <https://simplekml.readthedocs.io/en/latest/>`_. Better to use that than this.
+
 PyKML
 =====
 PyKML is a Python package for authoring, parsing, and manipulating KML
